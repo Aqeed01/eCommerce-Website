@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #d4e1e7;
+    }
+
+    .container {
+        width: 90%;
+        margin: auto;
+        overflow: hidden;
+        color:#666;
+    }
+
+    h2 {
+        color: #656161;
+        text-align: center;
+    }
+
+    .orders {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        margin-top: 20px;
+    }
+
+    .order {
+        width:30%; /* Adjusted width */
+        height:380px;
+        background-color: #f0ebeb;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        margin: 10px;
+        padding: 15px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+    }
+
+    .order:hover {
+        transform: translateY(-5px);
+    }
+
+    .order h3 {
+        color: #6c6a6a;
+        margin-bottom: 10px;
+    }
+
+    .order p {
+        margin: 5px 0;
+        color: #666;
+    }
+
+    .product-image {
+        width: 100%;
+        height: 200px; /* Fixed height for all images */
+        object-fit: cover; /* Crop images if needed */
+        margin-bottom: 10px;
+        border-radius: 5px;
+    }
+
+    .order-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 10px;
+    }
+
+    .refund-button {
+        padding: 6px 12px;
+        background-color: #707ab0;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 50px;
+        transition: background-color 0.3s;
+        margin-top: -40px;
+    }
+
+    .refund-button:hover {
+        background-color: #484879;
+    }
+
+    .refund-button.disabled {
+        background-color: #ccc;
+        pointer-events: none;
+    }
+
+    .refund-not-possible {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-top: -30px; /* Adjust the value as needed */
+    }
+
+    .refund-not-possible p {
+        margin: 0;
+        color: #db7474;
+    }
+</style>
+
+<div class="container">
+    <br><h2 text-align:centre> Track Your Orders 🚚</h2>
+    <div class="orders">
+        {% if order_history %}
+            {% for order in order_history %}
+                <div class="order">
+                    <!-- Order details -->
+                    <h3>Order ID: {{ order.id }}</h3>
+                    <p>Status: {{ order.tracking_level }}</p>
+                    <p>Total Price: ${{ order.total_price | round(2) }}</p>
+                    {% if order.date_created %}
+                        <p>Order Date: {{ order.date_created.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                    {% else %}
+                        <!-- Handle case when order.date_created is None -->
+                    {% endif %}
+
+                    <!-- Product image -->
+                    {% if order.items %}
+                        <div class="product-image">
+                            <img src="{{ order.items[0].pic }}" alt="Product Image" width="150">
+                        </div>
+                    {% endif %}
+
+                    <!-- Order details and refund button -->
+                    <div class="order-details">
+                        {% if order.tracking_level == 'Processing' %}
+                            <a href="/refund_order/{{ order.id }}" class="refund-button">Get Refund</a>
+                        {% else %}
+                            <div class="refund-not-possible">
+                                <p>Sorry, refund not possible as your product is on its way!</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No orders to track.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

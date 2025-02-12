@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .product-container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+
+    .product-details {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .product-item {
+        padding: 20px;
+        border-bottom: 1px solid #ccc;
+        transition: background-color 0.3s ease;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .product-item:last-child {
+        border-bottom: none;
+    }
+
+    .product-item:hover {
+        background-color: #c0d6e9;
+    }
+
+    .product-title,
+    .product-item strong {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .product-price,
+    .product-item {
+        color: #555;
+    }
+
+    .product-image {
+        max-width: 300px;
+        height: auto;
+        display: block;
+        margin: 0 auto;
+        border: 2px solid #555;
+        border-radius: 10px;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+
+    .rating-review-btn {
+        background-color: #008CBA;
+        color: #fff;
+        padding: 6px 12px;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .rating-review-btn:hover {
+        background-color: #005F6B;
+    }
+    .ratings-reviews {
+        margin-top: 20px;
+    }
+
+    .rating-review {
+        display: flex;
+        margin-bottom: 10px;
+    }
+
+    .rating-review p {
+        margin: 0;
+    }
+
+    .rating {
+        margin-right: 20px;
+    }
+
+</style>
+
+<div class="product-container">
+    <h1>{{ product.name }}</h1>
+    <img src="{{ image_path }}" alt="Product Image" class="product-image">
+    <ul class="product-details">
+        <li class="product-item"><strong>SKU:</strong> {{ product.sku }}</li>
+        <li class="product-item"><strong>Price:</strong> ${{ product.price }}</li>
+        <li class="product-item"><strong>Description:</strong> {{ product.item_desc }}</li>
+        <li class="product-item"><strong>Category:</strong> {{ product.category }}</li>
+
+        <li class="product-item"><strong>Stock:</strong> 
+            {% if product.stock <= 10 %}
+                <span style="color: red;">Low stock!</span> 
+            {% endif %}
+            {{ product.stock }}
+        </li>
+
+        <li class="product-item"><strong>Rating:</strong> {{ product.item_star }}</li>
+        <li class="product-item"><strong>Sizes:</strong> {{ product.itme_sizes }}</li>
+        <li class="product-item"><strong>Color:</strong> {{ product.color }}</li>
+        <li class="product-item" style="border-bottom: none;"><a href="/product/{{ product.Item_ID }}/rating_review" class="rating-review-btn">Rate and Review this Product</a></li>
+        <li class="product-item" style="border-bottom: none;">
+            <form action="{{ url_for('add_to_wishlist') }}" method="POST">
+                <input type="hidden" name="item_id" value="{{ product.Item_ID }}">
+                <input type="hidden" name="user_id" value="{{ user_id }}">
+                <button type="submit" class="rating-review-btn">Add to Wishlist</button>
+            </form>
+        </li>
+        <li class="product-item" style="border-bottom: none;">
+            <form action="{{ url_for('add_to_cart') }}" method="POST">
+                <input type="hidden" name="item_id" value="{{ product.Item_ID }}">
+                <input type="hidden" name="user_id" value="{{ user_id }}">
+                <button type="submit" class="rating-review-btn">Add to Cart</button>
+            </form>
+        </li>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <ul class="flashes">
+                {% for message in messages %}
+                    <li style="color: red;">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+        {% endwith %}
+    
+    </ul>
+    <div class="ratings-reviews">
+        <h2>Ratings and Reviews</h2>
+        {% if ratings_reviews %}
+            {% for rating_review in ratings_reviews %}
+                <div class="rating-review">
+                    <p><strong>Rating:</strong> {{ rating_review.rating }}</p>
+                    <p><strong>Review:</strong> {{ rating_review.review }}</p>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p>No ratings and reviews yet.</p>
+        {% endif %}
+    </div>
+
+</div>
+{% endblock %}

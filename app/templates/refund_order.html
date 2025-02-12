@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .container {
+        width: 50%;
+        margin: auto;
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    h2 {
+        color: #333;
+        text-align: center;
+    }
+
+    p {
+        color: #555;
+        text-align: center;
+        margin-bottom: 20px;
+    }
+
+    select {
+        width: 100%;
+        padding: 10px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        font-size: 16px;
+        margin-bottom: 20px;
+    }
+
+    button[type="submit"] {
+        background-color: #b2b9ea;
+        color: white;
+        padding: 12px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        width: 100%;
+        font-size: 16px;
+    }
+
+    button[type="submit"]:hover {
+        background-color: #647bd7;
+    }
+</style>
+
+<BR><BR><div class="container">
+    <h2>Refund Order</h2>
+    <p>Please select a reason for your refund:</p>
+    <form action="/submit_refund/{{ order.id }}" method="post">
+        <select name="reason">
+            <option value="Damaged">Delay in delivery</option>
+            <option value="Wrong">Ordered the wrong product</option>
+            <option value="Cancel">Changed my mind, want to cancel</option>
+            <option value="Cancel">No longer need the product</option>
+            <option value="Cancel">Unsatisfactory customer service</option>
+        </select>
+        <br><br>
+        <button type="submit">Submit Refund</button>
+    </form>
+</div>
+{% endblock %}

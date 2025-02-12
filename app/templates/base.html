@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SHOP-NONSTOP!</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        @font-face {
+        font-family: Font1;
+        src: url(/static/Butler.otf);
+        }
+        
+        body {
+            margin: 0;
+            font-family: Font1,Arial, sans-serif;
+            background-color: #dfe3ee;/* Light pastel color */
+            color: #615f5f;
+        }
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #9ea3ca;
+            color: white;
+            padding: 10px;
+            height: 85px;
+            position: relative;
+        }
+        .navbar a, .dropdown-content a {
+            color: white;
+            text-decoration: none;
+            padding: 10px;
+        }
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #ffffff;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+            width: 150px;
+            border-radius: 3px;
+            
+        }
+        .dropdown-content a {
+            display: block;
+            text-decoration: none;
+            color:#6666ad;
+        }
+        .search-bar input[type="text"] {
+            padding: 7px;
+            margin: 5px 0;
+            margin-right: 50px;
+            border: none;
+            border-radius: 5px;
+            width: 100%;
+        }
+        .icons {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        .icons a {
+            margin-right: 20px;
+            position: relative;
+            text-decoration: none;
+        }
+        .order-tracker-button {
+            background-color: #000; /* Black color */
+            color: white;
+            border: none;
+            border-radius: 10px; /* Rounded corners */
+            padding: 10px 15px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .order-tracker-button:hover {
+            background-color: #222; /* Darker black color on hover */
+        }
+
+        @media screen and (max-width: 600px) {
+            .navbar {
+                flex-direction: column;
+                align-items: flex-start;
+                height: auto;
+            }
+            .icons {
+                margin-top: 10px;
+            }
+        }
+
+        .page {
+            background-color: white;
+            width: 300mm;
+            height: 200mm;
+            margin: 40px auto;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            overflow: hidden;
+        }
+        .text {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        h2 {
+             display: flex;
+             justify-content: flex-end;
+             max-width: 60%;
+        }
+
+
+
+
+       .signup-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 50px;
+            background-color: #9c9cb1;
+        }
+        .signup-photo {
+            flex: 1;
+            padding: 20px;
+        }
+        .signup-photo img {
+            width: 75%;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .signup-form {
+            flex: 1;
+            background-color: #9c9cb1; /* Original color */
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-right: 50px;
+        }
+        .signup-form label {
+            font-weight: bold;
+        }
+        .signup-form input[type="text"],
+        .signup-form input[type="email"],
+        .signup-form input[type="password"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #a48a8a;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .signup-form input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #474795; /* Original color */
+            color: #dfcdde;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .signup-form input[type="submit"]:hover {
+            background-color:  #9696b8; /* Original color */
+        }
+
+        @font-face {
+        font-family: myFont;
+        src: url(/static/Flicker.otf);
+        }
+        
+        .website-name {
+            font-family: myFont;
+            font-size: 55px;
+        }
+
+
+        .budget-form {
+            display: none;
+            position: absolute;
+            background-color: #fff; /* Background color */
+            border: 1px solid #ccc; /* Border color */
+            border-radius: 5px; /* Rounded corners */
+            padding: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); /* Box shadow */
+        }
+        .budget-form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .budget-form input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc; /* Border color */
+            border-radius: 3px; /* Rounded corners */
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        .budget-form input[type="submit"] {
+            width: 100%;
+            padding: 10px;
+            background-color: #707ab0; /* Button background color */
+            color: #fff; /* Button text color */
+            border: none;
+            border-radius: 3px; /* Rounded corners */
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .budget-form input[type="submit"]:hover {
+            background-color: #484879; /* Button background color on hover */
+        }
+
+        .all-products-button {
+            padding: 10px 20px; /* Padding */
+            background-color: #707ab0; /* Background color */
+            color: white; /* Text color */
+            border: none; /* Border */
+            border-radius: 5px; /* Rounded corners */
+            text-decoration: none; /* Remove underline */
+            cursor: pointer; /* Cursor style */
+            transition: background-color 0.3s ease; /* Smooth transition */
+        }
+        .all-products-button:hover {
+            background-color: #484879; /* Darker background color on hover */
+
+
+        }
+    </style>
+
+
+
+
+
+</head>
+<body>
+    <div class="navbar">
+        <div class="icons">
+            <a href="/" class="website-name">SHOP-NONSTOP!</a>
+        </div>
+    
+        <div class="icons">
+            <a href="/show_products" class="all-products-button">All Products</a>
+            <a href="/compare" class="all-products-button">Compare Products</a>
+            <!-- Dropdown menu for account and orders -->
+            <div class="dropdown">
+                <a href="dashboard">👤Account</a>
+                <div class="dropdown-content">
+                    <a href="/signup">Create Account</a>
+                    <a href="/login">🔐 Login</a>
+                    <a href="/total_expenses">🪙 Expenses </a>
+                    <a href="/non_stop_points">🏆 point info!</a> <!-- Added Link -->
+                    <a href="/logout">➡️ Logout</a>
+                </div>
+            </div>
+            <div class="dropdown">
+                <a href="#"> 🛍️ Orders</a>
+                <div class="dropdown-content">
+                    <a href="/track_order"> Track order</a>
+                    <a href="/order_history"> Order History</a>
+                </div>
+            </div>
+            <!-- Link to cart page -->
+            <a href="/cart">🛒 Cart</a>
+            <!-- Budget section with hover effect -->
+            <div class="dropdown">
+                <span class="budget-button">💰 Budget: ${{ session.get('budget', '0.00') }}</span>
+                <div class="dropdown-content budget-form">
+                    <form action="/set_budget" method="POST">
+                        <label for="budget">Set Budget:</label>
+                        <input type="number" id="budget" name="budget" step="0.01">
+                        <input type="submit" value="Set">
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main content -->
+    <div class="content">
+        {% block content %}
+        <!-- Your page content goes here -->
+        {% endblock %}
+    </div>
+
+    <!-- JavaScript to handle hover event -->
+    <script>
+        const budgetButton = document.querySelector('.budget-button');
+        const budgetForm = document.querySelector('.budget-form');
+
+        budgetButton.addEventListener('mouseenter', () => {
+            budgetForm.style.display = 'block';
+        });
+
+        budgetForm.addEventListener('mouseleave', () => {
+            budgetForm.style.display = 'none';
+        });
+    </script>
+
+
+</body>
+</html>

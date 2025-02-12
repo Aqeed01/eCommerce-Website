@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="signup-container">
+        <div class="signup-form">
+            <h1>Sign Up Here!</h1>
+            <form action="/signup" method="post">
+                <label for="username">Username:</label><br>
+                <input type="text" id="username" name="username" required><br>
+                <label for="email">Email:</label><br>
+                <input type="email" id="email" name="email" required><br>
+                <label for="password">Password:</label><br>
+                <input type="password" id="password" name="password" required><br><br>
+                <label>What are you looking for?</label><br>
+                <input type="checkbox" id="Kitchen" name="categories[]" value="Kitchen">
+                <label for="kitchen">Kitchen</label><br>
+                <input type="checkbox" id="Apparel" name="categories[]" value="Apparel">
+                <label for="apparel">Apparel</label><br>
+                <input type="checkbox" id="Fitness" name="categories[]" value="Fitness">
+                <label for="fitness">Fitness</label><br>
+                <input type="checkbox" id="Accessories" name="categories[]" value="Accessories">
+                <label for="accessories">Accessories</label><br>
+                <input type="checkbox" id="Books" name="categories[]" value="Books">
+                <label for="books">Books</label><br><br>
+                <input type="submit" value="Sign Up">
+            </form>
+        </div>
+    </div>
+{% endblock %}

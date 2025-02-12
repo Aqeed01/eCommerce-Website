@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <title>Add Friends</title>
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .search-form {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            padding: 8px;
+            width: 60%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+        }
+
+        .search-button {
+            padding: 8px 16px;
+            background-color: #008CBA;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .search-button:hover {
+            background-color: #005F6B;
+        }
+
+        .search-results {
+            margin-top: 20px;
+        }
+
+        .search-results h2 {
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .search-results ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .search-results li {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between; /* Align items to the right */
+        }
+
+    </style>
+</head>
+<body>
+    <br><br><div class="container">
+        <h2>Add Friends</h2>
+        
+        <!-- Search form -->
+        <form class="search-form" action="/add_friend" method="GET">
+            <input class="search-input" type="text" name="search_query" placeholder="Enter username...">
+            <button class="all-products-button" type="submit">Search</button>
+        </form>
+        
+        <!-- Display search results -->
+        <div class="search-results">
+            {% if users %}
+                <h4>Search Results...</h4>
+                <ul>
+                    {% for user in users %}
+                        <li>
+                            <div>{{ user.username }}</div>
+                            <form action="/add_friend/{{ user.id }}/add" method="POST">
+                                <button class="search-button" type="submit">Add Friend</button>
+                            </form>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>No users found.</p>
+            {% endif %}
+        </div>
+
+        
+        
+
+    </div>
+</body>
+{% endblock %}

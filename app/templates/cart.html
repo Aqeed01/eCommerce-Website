@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<title>Dashboard</title>
+<style>
+    /* Additional styles for dashboard */
+    .products-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        justify-content: center;
+    }
+
+    .product-section {
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease;
+        width: 200px; /* Adjusted width */
+    }
+
+    .product-section:hover {
+        transform: translateY(-5px);
+    }
+
+    .product-details {
+        padding: 10px;
+    }
+
+    .product-details h3 {
+        margin: 0;
+        font-size: 16px; /* Adjusted font size */
+        color: #333;
+    }
+
+    .product-details p {
+        margin: 5px 0;
+        font-size: 14px;
+        color: #888;
+    }
+
+    .product-image {
+        width: 100%;
+        height: 150px; /* Fixed height */
+        object-fit: cover; /* Ensure images cover the entire space */
+        border-radius: 10px 10px 0 0;
+    }
+
+
+    .productimage {
+        max-width: 100%;
+        height: auto;
+    }
+
+    .total-price-container {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+</style>
+
+<div class="content">
+    <div class="total-price-container">
+        <h1>{{username}}</h1>
+    </div>
+    <div class="total-price-container">
+        <h3>MY CART:</h3>
+    </div>
+    <div class="products-container">
+        {% for item in cart_products %}
+        <div class="product-section">
+            <div class="product">
+                <img src="{{ item.pic }}" alt="Product Image" class="product-image">
+                <div class="product-details">
+                    <h3>{{ item.name }}</h3>
+                    <p>${{ item.price }}</p>
+                </div>
+                <div class="all-products-button">
+                    <form action="{{ url_for('remove_from_cart', item_id=item.Item_ID) }}" method="POST">
+                        <input type="hidden" name="item_id" value="{{ item.Item_ID }}">
+                        <input type="hidden" name="user_id" value="{{ user_id }}">
+                        <button type="submit" class="all-products-button">Remove</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="total-price-container">
+        <h3>Total Price: ${{ total_price }}</h3>
+    </div>
+    {% if cart_products %}
+    <div class="total-price-container">
+        <a href="{{ url_for('checkout') }}" class="all-products-button">Proceed to Checkout</a>
+    </div>
+    {% else %}
+    <div class="total-price-container">
+        <p>Cart is empty.</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

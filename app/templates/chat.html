@@ -1,0 +1,125 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* Custom CSS styles */
+        body {
+            background-color: #f8f9fa; /* Change background color */
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        #chat-container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff; /* Change background color */
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .message {
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .user-message {
+            background-color: #f0f0f0;
+            color: #333;
+            text-align: right;
+        }
+        .chatbot-message {
+            background-color: #e0e0e0;
+            color: #333;
+        }
+        .input-group {
+            margin-top: 20px;
+        }
+        #message-input {
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+        #send-button {
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container" class="container">
+        <h2 style="max-width: calc(100% - 25px); overflow: hidden; text-overflow: ellipsis; text-align: center;">Welcome to our Customer Support Centre 💬</h2>
+        <div id="chat-messages">
+            <!-- Chat messages will be displayed here -->
+        </div>
+        <div class="input-group">
+            <input type="text" id="message-input" class="form-control" placeholder="Type your message...">
+            <div class="input-group-append">
+                <button id="send-button" class="all-products-button">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Font Awesome CDN for iconic font -->
+    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
+
+    <script>
+        // JavaScript code to handle sending and receiving messages
+        document.addEventListener('DOMContentLoaded', function() {
+            const messageInput = document.getElementById('message-input');
+            const sendButton = document.getElementById('send-button');
+            const chatMessages = document.getElementById('chat-messages');
+
+            sendButton.addEventListener('click', function() {
+                const message = messageInput.value;
+                sendMessage(message);
+                messageInput.value = ''; // Clear the input field
+            });
+
+            function sendMessage(message) {
+                // Display user's message
+                displayMessage(message, true);
+
+                // Send the message to the backend
+                fetch('/chat/send_message', {
+                    method: 'POST',
+                    body: new URLSearchParams({ message }),
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    // Display chatbot's response
+                    displayMessage(data.response, false);
+                })
+                .catch(error => {
+                    console.error('Error sending message:', error);
+                });
+            }
+
+            function displayMessage(message, isUser) {
+                const messageElement = document.createElement('div');
+                messageElement.classList.add('message');
+                messageElement.classList.add(isUser ? 'user-message' : 'chatbot-message');
+                messageElement.textContent = message;
+                chatMessages.appendChild(messageElement);
+            }
+        });
+    </script>
+</body>
+</html>
+{% endblock %}

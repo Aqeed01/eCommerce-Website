@@ -1,0 +1,128 @@
+
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .product-image {
+        width: 200px; /* Adjust the width as needed */
+        height: auto; /* Maintain aspect ratio */
+        display: block;
+        margin: 0 auto; /* Center the image */
+    }
+</style>
+
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+
+    <div class="container">
+    <h1 class="mt-4">Select two products to compare:</h1>
+    <form action="/compare" method="POST">
+        <div class="row">
+            <div class="col-md-6">
+                <label for="item1">Select Item 1:</label>
+                <select class="form-control" name="item1" id="item1">
+                    {% for item in items %}
+                        <option value="{{ item.Item_ID }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label for="item2">Select Item 2:</label>
+                <select class="form-control" name="item2" id="item2">
+                    {% for item in items %}
+                        <option value="{{ item.Item_ID }}">{{ item.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+        </div>
+        <button type="submit" class="all-products-button">Compare</button>
+    </form>
+
+    <!-- Display compared items here -->
+    {% if compared_items %}
+        <h2 class="mt-4 text-center">Comparison Results</h2>
+
+        <div class="row mt-4">
+            <div class="col-md-6 text-center">
+
+                <img src="{{ item1_pic }}" alt="Item 1 Image" class="product-image">
+            </div>
+            <div class="col-md-6 text-center">
+
+                <img src="{{ item2_pic }}" alt="Item 2 Image" class="product-image">
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="table table-bordered mx-auto">
+                <thead>
+                    <tr>
+                        <th class="text-center">Features</th>
+                        <th class="text-center">Item 1</th>
+                        <th class="text-center">Item 2</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+
+
+
+
+                    <tr>
+                        <td>Name</td>
+                        <td>{{ compared_items['item1'].name }}</td>
+                        <td>{{ compared_items['item2'].name }}</td>
+                    </tr>
+                    <tr>
+                        <td>SKU</td>
+                        <td>{{ compared_items['item1'].sku }}</td>
+                        <td>{{ compared_items['item2'].sku }}</td>
+                    </tr>
+                    <tr>
+                        <td>Price</td>
+                        <td>${{ compared_items['item1'].price }}</td>
+                        <td>${{ compared_items['item2'].price }}</td>
+                    </tr>
+                    <tr>
+                        <td>Description</td>
+                        <td>{{ compared_items['item1'].item_desc }}</td>
+                        <td>{{ compared_items['item2'].item_desc }}</td>
+                    </tr>
+                    <tr>
+                        <td>Category</td>
+                        <td>{{ compared_items['item1'].category }}</td>
+                        <td>{{ compared_items['item2'].category }}</td>
+                    </tr>
+                    <tr>
+                        <td>Stock</td>
+                        <td>{{ compared_items['item1'].stock }}</td>
+                        <td>{{ compared_items['item2'].stock }}</td>
+                    </tr>
+                    <tr>
+                        <td>Item Star</td>
+                        <td>{{ compared_items['item1'].item_star }}</td>
+                        <td>{{ compared_items['item2'].item_star }}</td>
+                    </tr>
+                    <tr>
+                        <td>Item Sizes</td>
+                        <td>{{ compared_items['item1'].itme_sizes }}</td>
+                        <td>{{ compared_items['item2'].itme_sizes }}</td>
+                    </tr>
+                    <tr>
+                        <td>Color</td>
+                        <td>{{ compared_items['item1'].color }}</td>
+                        <td>{{ compared_items['item2'].color }}</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </div>
+    {% endif %}
+    </div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+
+
+{% endblock %}

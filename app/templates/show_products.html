@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .search-form {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 10px;
+        align-items: center;
+    }
+
+    .filters-container {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+    }
+
+    .search-form label,
+    .search-form input,
+    .search-form select,
+    .search-form button {
+        margin: 0; /* Resets margin to better control spacing */
+    }
+
+    .search-form input[type="text"],
+    .search-form input[type="number"],
+    .search-form select {
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+    .product-container {
+        max-width: 800px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #fff; /* Adjusted to match the base page's style */
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+        text-align: center;
+        color: #333;
+    }
+
+    .product-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .product-item {
+        padding: 20px;
+        border-bottom: 1px solid #ccc;
+        transition: background-color 0.3s ease;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .product-item:hover {
+        background-color: #c0d6e9;
+    }
+
+    .product-title {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .product-price {
+        color: #555;
+        font-size: 16px;
+    }
+
+    .pagination {
+        text-align: center;
+        margin-top: 20px;
+    }
+
+    .pagination a {
+        display: inline-block;
+        padding: 8px 16px;
+        margin: 0 5px;
+        background-color: #008CBA;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .pagination a:hover {
+        background-color: #005F6B;
+    }
+
+    .view-details-btn {
+        background-color: #008CBA;
+        color: #fff;
+        padding: 6px 12px;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .view-details-btn:hover {
+        background-color: #005F6B;
+    }
+</style>
+
+<div class="product-container">
+
+    <!-- Search form -->
+    <form class="search-form" action="/search" method="GET">
+        <input class="search-input" type="text" name="query" placeholder="🔍 Search Products...">
+        <button class="all-products-button" type="submit">Search</button>
+    </form>
+
+    <!-- Search form with filters -->
+    <form class="search-form" action="/search" method="GET">
+        <label for="price">Price:</label>
+        <input class="filter-input" type="number" name="price" id="price" min="0">
+        <label for="category">Category:</label>
+        <select class="filter-input" name="category" id="category">
+            <option value="">Select Category</option>
+            {% for category in categories %}
+                <option value="{{ category }}">{{ category }}</option>
+            {% endfor %}
+        </select>
+        <label for="item_star">Item Star:</label>
+        <input class="filter-input" type="number" name="item_star" id="item_star" min="0" max="5">
+        <button class="all-products-button" type="submit">Search</button>
+    </form>
+
+    <ul class="product-list">
+        {% for product in products.items %}
+        <li class="product-item">
+            <div>
+                <span class="product-title">{{ product.name }}</span>
+                <span class="product-price">${{ product.price }}</span>
+            </div>
+            <a href="/product/{{ product.Item_ID }}" class="view-details-btn">View Details</a>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <div class="pagination">
+        {% if products.has_prev %}
+            <a href="?page={{ products.prev_num }}">Previous</a>
+        {% endif %}
+        Page {{ products.page }} of {{ products.pages }}
+        {% if products.has_next %}
+            <a href="?page={{ products.next_num }}">Next</a>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

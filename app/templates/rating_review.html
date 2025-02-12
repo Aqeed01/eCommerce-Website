@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product Rating and Review</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #dfe3ee;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .rating-form {
+            text-align: center;
+        }
+
+        .rating-input {
+            display: none;
+        }
+
+        .stars {
+            display: flex;
+            justify-content: center;
+            flex-direction: row-reverse; /* Reversed direction */
+        }
+
+        .stars label {
+            display: inline-block;
+            cursor: pointer;
+            font-size: 30px;
+            
+        }
+
+        .stars label:before {
+            content: "\2605"; /* Unicode star character */
+            color: #ddd;
+            transition: color 0.3s ease; /* Added transition property */
+        }
+
+        .stars label:hover:before,
+        .stars label:hover ~ label:before, /* Added this line */
+        .rating-input:checked ~ label:before {
+        color: #f8d64e; /* Yellow star color */
+        }
+        .review-input {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .submit-btn {
+            background-color: #008CBA;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease;
+        }
+
+        .submit-btn:hover {
+            background-color: #005F6B;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Rate and Review this Product</h1>
+        <p>Item ID: {{ Item_ID }}</p>
+        <form class="rating-form" action="/product/{{ Item_ID }}/rating_review" method="POST">
+            <div class="stars">
+                <input class="rating-input" type="radio" id="star5" name="rating" value="5">
+                <label for="star5">&#9733</label>
+                <input class="rating-input" type="radio" id="star4" name="rating" value="4">
+                <label for="star4">&#9733;</label>
+                <input class="rating-input" type="radio" id="star3" name="rating" value="3">
+                <label for="star3">&#9733;</label>
+                <input class="rating-input" type="radio" id="star2" name="rating" value="2">
+                <label for="star2">&#9733;</label>
+                <input class="rating-input" type="radio" id="star1" name="rating" value="1">
+                <label for="star1">&#9733;</label>
+            </div>
+            <textarea class="review-input" name="review" rows="5" placeholder="Write your review here..."></textarea>
+            <button class="submit-btn" type="submit">Submit</button>
+        </form>
+    </div>
+</body>
+</html>

@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <title>View Friends</title>
+    <style>
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        .friend-list {
+            margin-top: 20px;
+        }
+
+        .friend-list ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .friend-list li {
+            margin-bottom: 10px;
+            padding: 10px;
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .friend-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .friend-name {
+            flex-grow: 1;
+        }
+
+        .remove-button {
+            background-color: #edc3bc; /* Red color */
+            color: #fff;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .remove-button:hover {
+            background-color: #cc4125; /* Darker red color on hover */
+        }
+
+        .dashboard-button {
+            display: block;
+            margin: 20px auto 0; /* Center the button horizontally and add some space at the top */
+            text-align: center;
+            text-decoration: none;
+            background-color: #008CBA; /* Purple color */
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            transition: background-color 0.3s ease;
+        }
+
+        .dashboard-button:hover {
+            background-color: #005F6B; /* Darker purple color on hover */
+        }
+        /* Gift points form and button styling */
+        .gift-form {
+            display: flex;
+            align-items: center;
+        }
+
+        .gift-form select {
+            padding: 8px;
+            margin-right: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+
+        .gift-form button {
+            background-color: #a1a8cd;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .gift-form button:hover {
+            background-color: #846c94;
+        }
+        
+    </style>
+</head>
+<body>
+    <br><br><div class="container">
+        <div class="friend-list">
+            <h2>Friend List</h2>
+            <ul>
+                {% for friend in friends %}
+                    <li>
+                        <span class="friend-name">{{ friend.username }}</span>
+
+                        <form class="gift-form" action="{{ url_for('gift_points_to_friend', friend_id=friend.id) }}" method="POST">
+                            <select name="points" id="points">
+                                <option value="100">100 points</option>
+                                <option value="500">500 points</option>
+                                <option value="1000">1000 points</option>
+                                <option value="1500">1500 points</option>
+                                <option value="2000">2000 points</option>
+                            </select>
+                            <button class="gift-button" type="submit">Gift Points</button>
+                        </form>
+
+                        <form action="/remove_friend/{{ friend.id }}" method="POST">
+                            <button class="remove-button" type="submit">Remove</button>
+                        </form>
+                    </li>
+
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Dashboard button -->
+        <a href="{{ url_for('dashboard', username=session.get('username')) }}" class="dashboard-button">Dashboard</a>
+    </div>
+</body>
+{% endblock %}

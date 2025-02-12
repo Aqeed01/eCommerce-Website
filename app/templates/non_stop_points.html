@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .container {
+        max-width: 800px;
+        margin: auto;
+        padding: 20px;
+    }
+    .card {
+        background-color: #ffffff;
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+        padding: 20px;
+    }
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #ddd;
+        text-align: left;
+        padding: 8px;
+    }
+    th {
+        background-color: #f2f2f2;
+    }
+    .btn-success {
+        background-color: #a6d1b0;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .btn-success:hover {
+        background-color: #59775f;
+    }
+</style>
+
+<div class="container mt-5">
+    <h1 style="text-align: center;">Non-Stop Points</h1><br>
+
+    <!-- Display User's Current Points -->
+    <div class="card">
+        <h3>Your Points: {{ user.points }}</h3>
+    </div>
+
+    <!-- Display Available Vouchers -->
+    <div class="card">
+        <h2>Available Vouchers</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Discount</th>
+                    <th>Points Cost</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for voucher in vouchers %}
+                <tr>
+                    <td>{{ voucher.type }}</td>
+                    <td>{{ voucher.discount }}%</td>
+                    <td>{{ voucher.points_cost }}</td>
+                    <td>
+                        {% if user.points >= voucher.points_cost %}
+                        <form action="{{ url_for('non_stop_points') }}" method="POST">
+                            <input type="hidden" name="voucher_id" value="{{ voucher.id }}">
+                            <button type="submit" class="btn btn-success">Redeem</button>
+                        </form>
+                        {% else %}
+                        <h5 style="color: red;">Not enough points</h5>
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+{% endblock %}

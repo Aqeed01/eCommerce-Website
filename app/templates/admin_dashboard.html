@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #cccee8; /* Change background color */
+        }
+
+        .container {
+            margin-top: 100px; /* Adjust vertical margin */
+            text-align: center; /* Center align content */
+        }
+
+        h1 {
+            margin-bottom: 30px; /* Adjust margin below title */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1 class="mb-4">Admin Dashboard</h1>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>User ID</th>
+                        <th>Phone</th>
+                        <th>Address</th>
+                        <th>Total Price</th>
+                        <th>Order Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                        <tr>
+                            <td>{{ order.id }}</td>
+                            <td>{{ order.user_id }}</td>
+                            <td>{{ order.phone }}</td>
+                            <td>{{ order.address }}</td>
+                            <td>${{ order.total_price }}</td>
+                            <td>{{ order.tracking_level }}</td>
+                            <td>
+                                <form action="{{ url_for('update_order_status', order_id=order.id) }}" method="post">
+                                    <div class="input-group">
+                                        <select class="form-select" name="status">
+                                            <option value="Processing">Processing</option>
+                                            <option value="Ready for Delivery">Ready for Delivery</option>
+                                            <option value="Delivered">Delivered</option>
+                                            <!-- Add more options as needed -->
+                                        </select>
+                                        <button type="submit" class="btn btn-primary">Update Status</button>
+                                    </div>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- Bootstrap JS -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

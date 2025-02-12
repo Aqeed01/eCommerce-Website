@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+    .view-all-btn {
+        padding: 5px 10px;
+        background-color: #8ba3bd;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        font-size: 14px;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    th, td {
+        border: 1px solid #ddd;
+        text-align: left;
+        padding: 8px;
+    }
+    
+    th {
+        background-color: #f2f2f2;
+    }
+    
+    .container {
+        margin: 0 auto;
+        max-width: 800px;
+        padding: 20px;
+        background-color: #ffffff;
+        text-align: center;
+    }
+</style>
+
+<br><h1 style="text-align: center;">{{ username }}'s Expense Tracker 💵</h1><br>
+<div class="container">
+    <h4>Total Expenses: ${{ '{:.2f}'.format(total_expenses) }}</h4><br>
+    <h4>Items Purchased This Month:</h4>
+    <table>
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Date Purchased</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in monthly_order_items %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ item.date }}</td>
+                    <td>${{ '{:.2f}'.format(item.price) }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">No items purchased this month.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table><br>
+    <div>
+        <h5>Monthly Expenses: ${{ '{:.2f}'.format(monthly_expenses) }}</h5>
+    </div>
+    <div>
+        <h5>Yearly Expenses: ${{ '{:.2f}'.format(yearly_expenses) }}</h5>
+        <div>
+            <h3><a href="/total_expenses/view" class="view-all-btn">View All</a></h3>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

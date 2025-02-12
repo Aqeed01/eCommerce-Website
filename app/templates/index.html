@@ -1,0 +1,217 @@
+<!-- index.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    /* style.css */
+
+    /* Slideshow container */
+    body {
+            margin: 0;
+            font-family: Font1,Arial, sans-serif;
+            /*background-color: #dfe3ee; Light pastel color */
+            background-color: #fff;
+            color: #615f5f;
+        }
+    .slideshow-container {
+        max-width: 1500px;
+        margin: auto;
+        overflow: hidden; /* Ensure slides stay within container */
+        border: 1px solid #ccc; /* Add border for visual separation */
+        background-color: #bdb8c1; 
+        border-radius: 5px; /* Add border radius for rounded corners */
+        position: relative; /* Relative positioning for absolute positioning of product details */
+    }
+
+    /* Hide the images by default */
+    .slide {
+        display: none;
+    }
+
+    /* Set fixed width and height for images */
+    .slide img {
+        width: 60%; /* Adjust the width as needed */
+        height: 300px; /* Adjust the height as needed */
+        object-fit: cover; /* Maintain aspect ratio */
+        float: left; /* Float left for image */
+    }
+
+    /* Position the deal information on the right of each product */
+    .product-details {
+        position: absolute;
+        top: 50%;
+        right: 0;
+        transform: translateY(-50%);
+        width: 30%; /* Take 50% width of the container */
+        height: auto; /* Auto height */
+        padding: 20px;
+        box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    }
+    /* Fade animation for the slides */
+    .fade {
+        animation: fade 5s infinite;
+    }
+
+    /* Define the dots to indicate the slide position */
+    .dot {
+        height: 15px;
+        width: 15px;
+        background-color: #bbb;
+        border-radius: 50%;
+        display: inline-block;
+        margin: 0 2px;
+        transition: background-color 0.6s ease;
+    }
+
+    /* Active dot */
+    .active {
+        background-color: #717171;
+    }
+    .custom-footer {
+            background-color: #c6c6d4; /* Light grey nearly purple color */
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height:10%;
+            padding: 5px 0; /* Adjust padding as needed */
+            text-align: center;
+        }
+    .content {
+            padding-bottom: 60px; /* Adjust the value based on the height of your footer */
+        }
+
+    /* Keyframe animation for fading slides */
+    @keyframes fade {
+        0% {
+            opacity: 0.4;
+        }
+        20% {
+            opacity: 1;
+        }
+        80% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0.4;
+        }
+    }
+
+    /* Button style */
+    .view-button {
+        padding: 10px 20px;
+        background-color: #90839c;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .view-button:hover {
+        background-color: #5f5468;
+    }
+    .deal-star {
+        font-size: 50px; /* Increase font size */
+        color: #964a42; /* Change font color */
+    }
+    .gif-section {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .gif {
+        height:400px;
+        width:200; /* Adjust the width as needed for smaller size */
+        margin: 30px; /* Adjust the margin as needed */
+    }
+
+    .gif-text-container {
+    text-align: center;
+    margin-right: 30px; /* Adjust as needed for spacing */
+    }
+
+    .enjoy-shopping-text {
+        font-size: 25px;
+        margin-bottom: 10px;
+        color: #964a42;
+    }
+
+</style>
+
+<div class="slideshow-container">
+    {% for product in deals_products %}
+        <div class="slide fade">
+            <img src="{{ product.item.pic }}" alt="Product Image">
+            <div class="product-details">
+                <div class="deal-star">{{ product.deal }}</div>
+                <a href="{{ url_for('product_page', Item_ID=product.item_id) }}"><button class="view-button">View Product</button></a>
+            </div>
+        </div>
+    {% endfor %}
+</div>
+<br>
+<div style="text-align:center">
+    {% for _ in deals_products %}
+        <span class="dot"></span>
+    {% endfor %}
+</div>
+
+<script>
+    // JavaScript for slideshow functionality
+    var slideIndex = 0;
+    showSlides();
+
+    function showSlides() {
+        var i;
+        var slides = document.getElementsByClassName("slide");
+        var dots = document.getElementsByClassName("dot");
+        for (i = 0; i < slides.length; i++) {
+            slides[i].style.display = "none";
+        }
+        slideIndex++;
+        if (slideIndex > slides.length) {slideIndex = 1}
+        for (i = 0; i < dots.length; i++) {
+            dots[i].className = dots[i].className.replace(" active", "");
+        }
+        slides[slideIndex-1].style.display = "block";
+        dots[slideIndex-1].className += " active";
+        setTimeout(showSlides, 5000); // Change image every 5 seconds
+    }
+</script>
+
+<!-- GIFs section -->
+<div class="gif-section">
+    <img src="/static/Layout_GIF.gif" alt="GIF 1" class="gif">
+    <img src="/static/bag_GIF.gif" alt="GIF 2" class="gif">
+    <div class="gif-text-container">
+        <div class="enjoy-shopping-text">Affordable Style for Every Smile!</div>
+        <div class="tenor-gif-embed" data-postid="15958416" data-share-method="host" data-aspect-ratio="1.23552" data-width="120%"><a href="https://tenor.com/view/shopping-buy-spend-gif-15958416">Shopping Buy Sticker</a>from <a href="https://tenor.com/search/shopping-stickers">Shopping Stickers</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+    </div>
+
+    <!--<div class="tenor-gif-embed" data-postid="15958416" data-share-method="host" data-aspect-ratio="1.23552" data-width="25%"><a href="https://tenor.com/view/shopping-buy-spend-gif-15958416">Shopping Buy Sticker</a>from <a href="https://tenor.com/search/shopping-stickers">Shopping Stickers</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>-->
+    <!-- Add more <img> tags for additional GIFs -->
+</div>
+
+
+<!-- Footer section -->
+<footer class="text-center py-4 custom-footer">
+    <a class="view-button" onclick="redirectToGoogleForm()">Complaint Box</a>
+    <a href="/chat" id="chat-icon">
+        <img src="/static/chat-icon.png" alt="Chat" width="50" height="50">
+    </a>
+    
+</footer>
+
+<script>
+function redirectToGoogleForm() {
+    // Redirect to the Google Form URL
+    window.location.href = "https://forms.gle/wGrvQbqYa5UigwAT7"; // Replace with your Google Form URL
+}
+</script>
+
+{% endblock %}

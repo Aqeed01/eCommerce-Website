@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block content %}
+<style>
+
+    .form-container {
+        margin: 0 auto;
+        max-width: 800px;
+        padding: 20px;
+        background-color: #ffffff;
+        text-align: center;
+    }
+
+    .form-container form {
+        display: inline-flex; /* Aligns items in a row */
+        justify-content: center;
+        align-items: end; /* Aligns items vertically at the bottom */
+        margin-top: 20px;
+    }
+
+    select, button[type="submit"] {
+        height: 40px; /* Match the height of the button */
+        margin: 10px 5px; /* Spacing around form elements */
+    }
+
+    select {
+        width: 150px; /* Wider select boxes */
+        background-color: white;
+        color: black;
+        padding: 5px 10px; /* Adjust padding for visual balance */
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+    /* Adjusting the filter button to match select height */
+    button[type="submit"] {
+        height: 38px; /* Ensure the button's height matches the select */
+        padding: 0 15px; /* Adjust padding to center text */
+        font-size: 16px;
+        background-color: #8ba3bd;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+
+    .select-wrapper:after {
+        right: 15px; /* Adjusted for wider select */
+    }
+
+    button[type="submit"] {
+        width: auto; /* Adjusts width based on content */
+        padding: 10px 20px; /* More padding for a larger button */
+    }
+
+    .select-wrapper {
+        position: relative;
+        display: flex; /* Ensures the wrapper behaves inline with other elements */
+    }
+
+    .select-wrapper:after {
+        content: '▼';
+        color: black;
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        pointer-events: none;
+    }
+
+    .view-all-btn, th, td {
+        /* Previous styles remain unchanged */
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    th, td {
+        border: 1px solid #ddd;
+        text-align: left;
+        padding: 8px;
+    }
+    
+    th {
+        background-color: #f2f2f2;
+    }
+
+    h1 {
+        text-align: center;
+    }
+</style>
+<div class="page">
+    <h1>{{ username }}'s Expenses</h1>
+
+    <div class="form-container">
+        <form action="" method="get">
+            <div class="select-wrapper">
+                <select name="month">
+                    <option value="">All Months</option>
+                    {% for m in range(1, 13) %}
+                    <option value="{{ m }}" {% if m == selected_month %}selected{% endif %}>{{ m }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="select-wrapper">
+                <select name="year">
+                    {% for y in range(2020, 2025) %}
+                    <option value="{{ y }}" {% if y == selected_year %}selected{% endif %}>{{ y }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <button type="submit">Filter</button>
+        </form>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>Item Name</th>
+                <th>Date Purchased</th>
+                <th>Price</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+                {% for item in order.items %}
+                <tr>
+                    <td>{{ item.name }}</td>
+                    <td>{{ order.date_created.strftime('%Y-%m-%d') }}</td>
+                    <td>${{ item.price }}</td>
+                </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td colspan="3">No items purchased.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

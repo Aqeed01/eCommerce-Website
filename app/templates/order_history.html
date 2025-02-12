@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    /* Define container style */
+    .order-group-container {
+        background-color: #ffffff; /* Add your desired background color */
+        border: 1px solid #dddddd; /* Add border if needed */
+        border-radius: 5px; /* Add border radius for rounded corners */
+        padding: 10px; /* Adjusted padding */
+        margin-bottom: 10px; /* Adjusted margin bottom */
+    }
+    .order-history-container {
+        background-color: #d4e0e6; /* Light Blue */
+        overflow-x: auto; /* Enable horizontal scrolling */
+        white-space: nowrap; /* Prevent line breaks */
+    }
+    .products {
+        display: flex; /* Use flexbox for horizontal layout */
+        gap: 20px;
+        padding: 10px;
+    }
+
+    .product {
+        background-color: #ece7e7;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        transition: transform 0.3s ease;
+        width: 200px; /* Set a fixed width for each product */
+    }
+
+    .product:hover {
+        transform: translateY(-5px);
+    }
+
+    .product-details {
+        padding: 10px; /* Adjusted padding */
+    }
+
+    .product-details h4 {
+        margin: 0;
+        font-size: 16px; /* Adjusted font size */
+        color: #333;
+    }
+
+    .product-details p {
+        margin: 5px 0;
+        font-size: 14px;
+        color: #888;
+    }
+
+    .product-image-container {
+        width: 100%;
+        height: 150px; /* Fixed height for all images */
+        overflow: hidden;
+        border-radius: 10px 10px 0 0;
+    }
+
+    .product-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .product-button {
+        display: flex;
+        justify-content: center;
+        margin-top: 10px;
+    }
+
+    .product-button a,
+    .product-button button {
+        padding: 6px 12px; /* Adjusted padding */
+        background-color: #007bff;
+        color: #fff;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+        cursor: pointer;
+    }
+
+    .product-button a:hover,
+    .product-button button:hover {
+        background-color: #0056b3;
+    }
+</style>
+
+<div class="content">
+
+    <!-- Order History Container -->
+    <div class="order-history-container">
+        <br><h2>Order History 🧾</h2>
+        <div class="products">
+            {% if grouped_order_history %}
+                {% for order_date, orders in grouped_order_history.items() %}
+                    <div class="order-group">
+                        <h5>Order {{ loop.index }} </h5>
+                        {% for order in orders %}
+                            <div class="product">
+                                <div class="product-image-container">
+                                    {% if order.items %}
+                                        <img src="{{ order.items[0].pic }}" alt="Product Image" class="product-image">
+                                    {% else %}
+                                        <!-- Handle case when order has no items -->
+                                    {% endif %}
+                                </div>
+                                <div class="product-details">
+                                    <p>Total Price: ${{ order.total_price | round(2) }}</p>
+                                    {% if order.date_created %}
+                                        <p>Order Date: {{ order.date_created.strftime('%Y-%m-%d %H:%M:%S') }}</p>
+                                    {% else %}
+                                        <!-- Handle case when order.date_created is None -->
+                                    {% endif %}
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p>No order history available.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
