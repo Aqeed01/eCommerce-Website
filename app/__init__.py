@@ -1,15 +1,13 @@
+import os
+import secrets
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///ecommerce.db'
-app.config['SECRET_KEY'] = '12345' 
+# Set SECRET_KEY in the environment. Without it a random key is used, so sessions reset on every restart.
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or secrets.token_hex(32)
 db = SQLAlchemy(app)
-
-import secrets
-
-secret_key = secrets.token_hex(16)  # Generate a 16-byte random key
-print(secret_key)
 
 from app.routes import *
