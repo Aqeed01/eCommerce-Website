@@ -1,140 +1,87 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<title>Checkout</title>
 <style>
-    .container {
-        max-width: 800px;
-        margin: auto;
-        padding: 20px;
-    }
-    .card {
-        background-color: #ffffff;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-        padding: 20px;
-    }
-    .card h3, .card-title {
-        color: #333;
-    }
-    .media img {
-        border-radius: 10px;
-        object-fit: cover;
-    }
-    .form-control {
-        margin-bottom: 10px;
-        padding: 10px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
-    }
-
-    .form-check-input {
-        margin-right: 10px;
-    }
-    .form-check-label {
-        margin-bottom: 10px;
-    }
-    .user-info-section {
-        display: flex;
-        flex-direction: column;
-    }
-    .user-info-section > div {
-        margin-bottom: 10px;
-    }
+    body { background-color: #fff; }
+    .ns-checkout { display: flex; flex-wrap: wrap; gap: 32px; align-items: flex-start; }
+    .ns-checkout-main { flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 24px; }
+    .ns-section { border: 1px solid #dfe3ee; border-radius: 12px; padding: 26px 28px; }
+    .ns-section h3 { margin: 0 0 16px; font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 30px; color: #25254f; }
+    .ns-pay { display: flex; flex-direction: column; gap: 10px; border: 0; margin: 0; padding: 0; }
+    .ns-pay label { display: flex; align-items: center; gap: 12px; border: 1px solid #dfe3ee; border-radius: 8px; padding: 14px 16px; min-height: 44px; box-sizing: border-box; color: #25254f; margin: 0; }
+    .ns-pay label.off { color: #6b6874; background: #fafafb; }
+    .ns-note { margin: 14px 0 0; background: #dfe3ee; border-radius: 8px; padding: 12px 14px; font-size: 14px; line-height: 1.45; color: #25254f; }
+    .ns-sum { flex: 1 1 340px; min-width: 0; max-width: 440px; background: #dfe3ee; border-radius: 12px; padding: 28px; box-sizing: border-box; }
+    .ns-sum .label { font-size: 14px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #474795; }
+    .ns-sum-item { display: flex; align-items: center; gap: 14px; background: #fff; border-radius: 10px; padding: 10px; margin-top: 12px; }
+    .ns-sum-item img { width: 60px; height: 60px; object-fit: cover; border-radius: 8px; background: #dfe3ee; }
+    .ns-sum-item .ns-name { flex: 1; font-size: 22px; }
+    .ns-sum-total { margin-top: 20px; padding-top: 16px; border-top: 1px solid #c6c6d4; display: flex; justify-content: space-between; font-size: 18px; font-weight: 600; color: #25254f; }
 </style>
 
-<div class="container mt-5">
-    <h2 class="mb-4">Checkout</h2>
-    <form method="POST" action="{{ url_for('place_order') }}">
+<div class="ns-wrap">
+    <h1 class="ns-title">Checkout</h1>
 
-        <!-- User Information Section -->
-        <div class="card">
-            <h3>User Information</h3>
-            <div class="user-info-section">
-                <div>
-                    <strong>Username:</strong> {{ user.username }}
+    <form method="POST" action="{{ url_for('place_order') }}" class="ns-checkout">
+        <div class="ns-checkout-main">
+            <section class="ns-section">
+                <h3>User Information</h3>
+                <div class="ns-row">
+                    <div>
+                        <span class="ns-label">Username</span>
+                        <div style="font-weight: 600; color: #25254f; padding: 11px 0;">{{ user.username }}</div>
+                    </div>
+                    <div>
+                        <label class="ns-label" for="phone">Phone Number</label>
+                        <input type="text" class="ns-input" id="phone" name="phone" required>
+                    </div>
+                    <div style="flex-basis: 100%;">
+                        <label class="ns-label" for="address">Address</label>
+                        <input type="text" class="ns-input" id="address" name="address" required>
+                    </div>
                 </div>
-                <div>
-                    <label for="phone">Phone Number:</label>
-                    <input type="text" class="form-control" id="phone" name="phone" required>
-                </div>
-                <div>
-                    <label for="address">Address:</label>
-                    <input type="text" class="form-control" id="address" name="address" required>
-                </div>
-            </div>
+            </section>
+
+            <section class="ns-section">
+                <h3>Payment Method</h3>
+                <fieldset class="ns-pay">
+                    <legend style="position: absolute; left: -9999px;">Payment method</legend>
+                    <label for="payByCash"><input type="radio" name="paymentMethod" id="payByCash" value="cash" checked> Pay by cash</label>
+                    <label for="payByBkash"><input type="radio" name="paymentMethod" id="payByBkash" value="bkash"> Pay by bKash</label>
+                    <label for="payByNagad"><input type="radio" name="paymentMethod" id="payByNagad" value="nagad"> Pay by Nagad</label>
+                    <label for="payByCard" class="off"><input type="radio" name="paymentMethod" id="payByCard" value="card" disabled> Pay by card (coming soon)</label>
+                </fieldset>
+                <p class="ns-note">If you select payment by bKash or Nagad, please add your name to the reference. A confirmation text will be sent to the number you have provided.</p>
+            </section>
+
+            <section class="ns-section">
+                <h3>Vouchers</h3>
+                {% if vouchers %}
+                <label class="ns-label" for="voucherSelect">Select a voucher</label>
+                <select class="ns-input" name="voucher_id" id="voucherSelect" style="max-width: 360px;">
+                    <option value="" data-discount="0">Select a voucher</option>
+                    {% for voucher in vouchers %}
+                    <option value="{{ voucher.id }}" data-discount="{{ voucher.discount }}">{{ voucher.type }} - {{ voucher.discount }}% off</option>
+                    {% endfor %}
+                </select>
+                {% else %}
+                <p style="margin: 0;">No vouchers available.</p>
+                {% endif %}
+            </section>
         </div>
 
-        <!-- Products Section -->
-        <div class="card">
-            <h3>Products</h3>
+        <aside class="ns-sum">
+            <div class="label">Products</div>
             {% for item in cart_products %}
-            <div class="media mb-3">
-                <img src="{{ item.pic }}" class="mr-3" alt="{{ item.name }}" style="width: 128px; height: 128px;">
-                <div class="media-body">
-                    <h5 class="mt-0">{{ item.name }}</h5>
-                    Price: ${{ item.price }}
-                </div>
+            <div class="ns-sum-item">
+                <img src="{{ item.pic }}" alt="{{ item.name }}">
+                <span class="ns-name">{{ item.name }}</span>
+                <span class="ns-price">${{ item.price }}</span>
             </div>
             {% endfor %}
-        </div>
-
-
-        <!-- Payment Method Section -->
-        <div class="card mb-3" style="background-color: white;">
-            <div class="card-body">
-                <h3 class="card-title">Payment Method</h3>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="paymentMethod" id="payByCash" value="cash" checked>
-                    <label class="form-check-label" for="payByCash">
-                        Pay by cash
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="paymentMethod" id="payByBkash" value="bkash">
-                    <label class="form-check-label" for="payByBkash">
-                        Pay by bKash
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="paymentMethod" id="payByNagad" value="nagad">
-                    <label class="form-check-label" for="payByNagad">
-                        Pay by Nagad
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="radio" name="paymentMethod" id="payByCard" value="card" disabled>
-                    <label class="form-check-label" for="payByCard" style="color: grey;">
-                        Pay by card (coming soon)
-                    </label>
-                </div>
-                <div style="margin-left: +1rem;"> <!-- Adjust the margin here -->
-                    <p style="color: red;">
-                        IF YOU SELECT PAYMENT BY BKASH OR NAGAD, PLEASE ADD YOUR NAME TO THE REFERENCE. A confirmation text will be sent to the number you have provided.
-                    </p>
-                </div>
-            </div>
-        <!-- Voucher Section -->
-        <div class="card mb-3">
-            <h3 class="card-title">Vouchers</h3>
-            {% if vouchers %}
-            <select class="form-control" name="voucher_id" id="voucherSelect">
-                <option value="" data-discount="0">Select a voucher</option>
-                {% for voucher in vouchers %}
-                <option value="{{ voucher.id }}" data-discount="{{ voucher.discount }}">{{ voucher.type }} - {{ voucher.discount }}% off</option>
-                {% endfor %}
-            </select>
-            {% else %}
-            <p>No vouchers available.</p>
-            {% endif %}
-        </div>
-
-        <!-- Total Price and Place Order Button Section -->
-        <div class="d-flex justify-content-between align-items-center">
-            <h4>Total Price: $<span id="totalPrice">{{ total_price }}</span></h4>
-            <button type="submit" class="all-products-button">Place Order</button>
-        </div>
+            <div class="ns-sum-total"><span>Total Price</span><span>$<span id="totalPrice">{{ total_price }}</span></span></div>
+            <button type="submit" class="ns-btn" style="width: 100%; margin-top: 20px; padding: 16px; font-size: 16px; min-height: 50px;">Place Order</button>
+        </aside>
     </form>
 </div>
 
@@ -143,7 +90,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const originalTotalPrice = {{ total_price }};
     const voucherSelect = document.getElementById('voucherSelect');
     const totalPriceDisplay = document.getElementById('totalPrice');
-
+    if (!voucherSelect) { return; }
     voucherSelect.addEventListener('change', function() {
         const selectedOption = voucherSelect.options[voucherSelect.selectedIndex];
         const discount = parseFloat(selectedOption.getAttribute('data-discount'));
@@ -152,5 +99,4 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 </script>
-
 {% endblock %}

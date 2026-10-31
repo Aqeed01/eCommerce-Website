@@ -1,16 +1,26 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="signup-container">
-        <div class="signup-form">
-            <h1>Already a user? Log in Here!</h1><br><br>
-            <form action="/login" method="post">
-                <label for="username">Username:</label><br>
-                <input type="text" id="username" name="username" required><br>
-                <label for="password">Password:</label><br>
-                <input type="password" id="password" name="password" required><br><br>
-                <input type="submit" value="Login">
-            </form>
-        </div>
+<style>
+    body { background-color: #fff; }
+</style>
+
+<div class="ns-auth">
+    <div class="ns-auth-photo"><img src="/static/Backpack.jpg" alt="Backpack"></div>
+    <div class="ns-auth-form">
+        <h1>Already a user? Log in Here!</h1>
+        <form action="/login" method="post">
+            <div class="ns-field">
+                <label class="ns-label" for="username">Username</label>
+                <input class="ns-input" type="text" id="username" name="username" required>
+            </div>
+            <div class="ns-field">
+                <label class="ns-label" for="password">Password</label>
+                <input class="ns-input" type="password" id="password" name="password" required>
+            </div>
+            <button type="submit" class="ns-btn" style="width: 100%; margin-top: 6px; padding: 15px; font-size: 16px; min-height: 48px;">Login</button>
+        </form>
+        <p style="margin: 22px 0 0; font-size: 15px;">New here? <a href="/signup" style="color: #474795; font-weight: 600; text-decoration: underline;">Create Account</a></p>
     </div>
+</div>
 {% endblock %}

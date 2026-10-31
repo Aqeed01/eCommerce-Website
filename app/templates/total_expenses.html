@@ -2,74 +2,44 @@
 
 {% block content %}
 <style>
-    .view-all-btn {
-        padding: 5px 10px;
-        background-color: #8ba3bd;
-        color: white;
-        text-decoration: none;
-        border-radius: 5px;
-        font-size: 14px;
-    }
-    
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    
-    th, td {
-        border: 1px solid #ddd;
-        text-align: left;
-        padding: 8px;
-    }
-    
-    th {
-        background-color: #f2f2f2;
-    }
-    
-    .container {
-        margin: 0 auto;
-        max-width: 800px;
-        padding: 20px;
-        background-color: #ffffff;
-        text-align: center;
-    }
+    body { background-color: #fff; }
+    .ns-stats { display: flex; flex-wrap: wrap; gap: 20px; }
+    .ns-stat { flex: 1 1 220px; border: 1px solid #dfe3ee; border-radius: 12px; padding: 26px 28px; }
+    .ns-stat.big { flex-basis: 280px; background: #dfe3ee; border: 0; }
+    .ns-stat .label { font-size: 14px; color: #6b6874; }
+    .ns-stat.big .label { font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #474795; }
+    .ns-stat .value { margin-top: 8px; font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 44px; line-height: 1; color: #25254f; }
+    .ns-stat.big .value { font-size: 64px; }
 </style>
 
-<br><h1 style="text-align: center;">{{ username }}'s Expense Tracker 💵</h1><br>
-<div class="container">
-    <h4>Total Expenses: ${{ '{:.2f}'.format(total_expenses) }}</h4><br>
-    <h4>Items Purchased This Month:</h4>
-    <table>
-        <thead>
-            <tr>
-                <th>Item Name</th>
-                <th>Date Purchased</th>
-                <th>Price</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for item in monthly_order_items %}
-                <tr>
-                    <td>{{ item.name }}</td>
-                    <td>{{ item.date }}</td>
-                    <td>${{ '{:.2f}'.format(item.price) }}</td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="3">No items purchased this month.</td>
-                </tr>
-            {% endfor %}
-        </tbody>
-    </table><br>
-    <div>
-        <h5>Monthly Expenses: ${{ '{:.2f}'.format(monthly_expenses) }}</h5>
-    </div>
-    <div>
-        <h5>Yearly Expenses: ${{ '{:.2f}'.format(yearly_expenses) }}</h5>
-        <div>
-            <h3><a href="/total_expenses/view" class="view-all-btn">View All</a></h3>
-        </div>
-    </div>
-</div>
+<div class="ns-wrap" style="max-width: 1100px;">
+    <h1 class="ns-title">{{ username }}'s Expense Tracker</h1>
 
+    <div class="ns-stats">
+        <section class="ns-stat big"><div class="label">Total Expenses</div><div class="value">${{ '{:.2f}'.format(total_expenses) }}</div></section>
+        <section class="ns-stat"><div class="label">Monthly Expenses</div><div class="value">${{ '{:.2f}'.format(monthly_expenses) }}</div></section>
+        <section class="ns-stat"><div class="label">Yearly Expenses</div><div class="value">${{ '{:.2f}'.format(yearly_expenses) }}</div></section>
+    </div>
+
+    <h2 class="ns-h2" style="margin-top: 40px;">Items Purchased This Month</h2>
+    <div class="ns-table-box">
+        <table class="ns-table">
+            <thead>
+                <tr><th>Item Name</th><th>Date Purchased</th><th style="text-align: right;">Price</th></tr>
+            </thead>
+            <tbody>
+                {% for item in monthly_order_items %}
+                <tr>
+                    <td><strong>{{ item.name }}</strong></td>
+                    <td>{{ item.date }}</td>
+                    <td style="text-align: right;" class="ns-price">${{ '{:.2f}'.format(item.price) }}</td>
+                </tr>
+                {% else %}
+                <tr><td colspan="3">No items purchased this month.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a href="/total_expenses/view" class="ns-btn" style="margin-top: 24px;">View All</a>
+</div>
 {% endblock %}

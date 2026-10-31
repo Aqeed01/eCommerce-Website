@@ -2,77 +2,43 @@
 
 {% block content %}
 <style>
-    .container {
-        max-width: 800px;
-        margin: auto;
-        padding: 20px;
-    }
-    .card {
-        background-color: #ffffff;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-        padding: 20px;
-    }
-    table {
-        width: 100%;
-        border-collapse: collapse;
-    }
-    th, td {
-        border: 1px solid #ddd;
-        text-align: left;
-        padding: 8px;
-    }
-    th {
-        background-color: #f2f2f2;
-    }
-    .btn-success {
-        background-color: #a6d1b0;
-        color: white;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-    .btn-success:hover {
-        background-color: #59775f;
-    }
+    body { background-color: #fff; }
+    .ns-points { display: flex; flex-wrap: wrap; align-items: baseline; gap: 16px; background: #dfe3ee; border-radius: 12px; padding: 28px 32px; }
+    .ns-points .label { font-size: 14px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #474795; }
+    .ns-points .value { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 72px; line-height: 1; color: #25254f; }
+    .ns-redeem { margin: 0; }
+    .ns-redeem .ns-btn { padding: 10px 20px; font-size: 14px; min-height: 40px; }
+    .ns-short { font-size: 14px; color: #6b6874; }
 </style>
 
-<div class="container mt-5">
-    <h1 style="text-align: center;">Non-Stop Points</h1><br>
+<div class="ns-wrap ns-narrow">
+    <h1 class="ns-title">Non-Stop Points</h1>
 
-    <!-- Display User's Current Points -->
-    <div class="card">
-        <h3>Your Points: {{ user.points }}</h3>
-    </div>
+    <section class="ns-points">
+        <span class="label">Your Points</span>
+        <span class="value">{{ user.points }}</span>
+    </section>
 
-    <!-- Display Available Vouchers -->
-    <div class="card">
-        <h2>Available Vouchers</h2>
-        <table>
+    <h2 class="ns-h2" style="margin-top: 40px;">Available Vouchers</h2>
+    <div class="ns-table-box">
+        <table class="ns-table" style="min-width: 560px;">
             <thead>
-                <tr>
-                    <th>Type</th>
-                    <th>Discount</th>
-                    <th>Points Cost</th>
-                    <th>Action</th>
-                </tr>
+                <tr><th>Type</th><th>Discount</th><th>Points Cost</th><th>Action</th></tr>
             </thead>
             <tbody>
                 {% for voucher in vouchers %}
                 <tr>
-                    <td>{{ voucher.type }}</td>
+                    <td><strong>{{ voucher.type }}</strong></td>
                     <td>{{ voucher.discount }}%</td>
                     <td>{{ voucher.points_cost }}</td>
                     <td>
                         {% if user.points >= voucher.points_cost %}
-                        <form action="{{ url_for('non_stop_points') }}" method="POST">
+                        <form class="ns-redeem" action="{{ url_for('non_stop_points') }}" method="POST">
                             <input type="hidden" name="voucher_id" value="{{ voucher.id }}">
-                            <button type="submit" class="btn btn-success">Redeem</button>
+                            <button type="submit" class="ns-btn">Redeem</button>
                         </form>
                         {% else %}
-                        <h5 style="color: red;">Not enough points</h5>
+                        <span class="ns-short">Not enough points</span>
                         {% endif %}
                     </td>
                 </tr>
@@ -80,6 +46,5 @@
             </tbody>
         </table>
     </div>
-
 </div>
 {% endblock %}

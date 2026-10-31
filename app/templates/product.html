@@ -2,154 +2,81 @@
 
 {% block content %}
 <style>
-    .product-container {
-        max-width: 800px;
-        margin: 20px auto;
-        padding: 20px;
-        background-color: #fff;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
-
-    h1 {
-        text-align: center;
-        color: #333;
-    }
-
-    .product-details {
-        list-style: none;
-        padding: 0;
-        margin: 0;
-    }
-
-    .product-item {
-        padding: 20px;
-        border-bottom: 1px solid #ccc;
-        transition: background-color 0.3s ease;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .product-item:last-child {
-        border-bottom: none;
-    }
-
-    .product-item:hover {
-        background-color: #c0d6e9;
-    }
-
-    .product-title,
-    .product-item strong {
-        font-weight: bold;
-        color: #333;
-    }
-
-    .product-price,
-    .product-item {
-        color: #555;
-    }
-
-    .product-image {
-        max-width: 300px;
-        height: auto;
-        display: block;
-        margin: 0 auto;
-        border: 2px solid #555;
-        border-radius: 10px;
-        box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
-        margin-bottom: 20px;
-    }
-
-    .rating-review-btn {
-        background-color: #008CBA;
-        color: #fff;
-        padding: 6px 12px;
-        border-radius: 5px;
-        text-decoration: none;
-        transition: background-color 0.3s ease;
-    }
-
-    .rating-review-btn:hover {
-        background-color: #005F6B;
-    }
-    .ratings-reviews {
-        margin-top: 20px;
-    }
-
-    .rating-review {
-        display: flex;
-        margin-bottom: 10px;
-    }
-
-    .rating-review p {
-        margin: 0;
-    }
-
-    .rating {
-        margin-right: 20px;
-    }
-
+    body { background-color: #fff; }
+    .ns-product { display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start; margin-top: 20px; }
+    .ns-product-photo { flex: 1 1 420px; min-width: 0; max-width: 600px; background: #dfe3ee; border-radius: 12px; overflow: hidden; }
+    .ns-product-photo img { width: 100%; height: 560px; object-fit: cover; display: block; }
+    .ns-product-info { flex: 1 1 380px; min-width: 0; }
+    .ns-product-info h1 { margin: 6px 0 0; font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 60px; line-height: 1; color: #25254f; }
+    .ns-cat { font-size: 14px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #474795; }
+    .ns-facts { margin: 24px 0 0; display: grid; grid-template-columns: 110px 1fr; gap: 10px 16px; font-size: 16px; }
+    .ns-facts dt { color: #6b6874; }
+    .ns-facts dd { margin: 0; font-weight: 600; color: #25254f; }
+    .ns-actions { margin-top: 30px; display: flex; flex-wrap: wrap; gap: 12px; }
+    .ns-actions form { margin: 0; }
+    .ns-reviews { margin-top: 56px; }
+    .ns-review { border: 1px solid #dfe3ee; border-radius: 10px; padding: 16px 20px; margin-bottom: 12px; }
+    .ns-review p { margin: 0 0 4px; }
 </style>
 
-<div class="product-container">
-    <h1>{{ product.name }}</h1>
-    <img src="{{ image_path }}" alt="Product Image" class="product-image">
-    <ul class="product-details">
-        <li class="product-item"><strong>SKU:</strong> {{ product.sku }}</li>
-        <li class="product-item"><strong>Price:</strong> ${{ product.price }}</li>
-        <li class="product-item"><strong>Description:</strong> {{ product.item_desc }}</li>
-        <li class="product-item"><strong>Category:</strong> {{ product.category }}</li>
+<div class="ns-wrap">
+    <a href="/show_products" style="font-size: 15px; font-weight: 600; color: #474795; text-decoration: underline;">All Products</a>
 
-        <li class="product-item"><strong>Stock:</strong> 
-            {% if product.stock <= 10 %}
-                <span style="color: red;">Low stock!</span> 
+    <div class="ns-product">
+        <div class="ns-product-photo"><img src="{{ image_path }}" alt="{{ product.name }}"></div>
+        <div class="ns-product-info">
+            <div class="ns-cat">{{ product.category }}</div>
+            <h1>{{ product.name }}</h1>
+            <div style="margin-top: 12px; display: flex; flex-wrap: wrap; align-items: center; gap: 14px;">
+                <span class="ns-price" style="font-size: 32px;">${{ product.price }}</span>
+                {% if product.stock <= 10 %}<span class="ns-tag">Low stock!</span>{% endif %}
+            </div>
+            <p style="margin: 18px 0 0; font-size: 18px; line-height: 1.55;">{{ product.item_desc }}</p>
+
+            <dl class="ns-facts">
+                <dt>SKU</dt><dd>{{ product.sku }}</dd>
+                <dt>Stock</dt><dd>{{ product.stock }}</dd>
+                <dt>Rating</dt><dd>{{ product.item_star }}</dd>
+                <dt>Sizes</dt><dd>{{ product.itme_sizes }}</dd>
+                <dt>Color</dt><dd>{{ product.color }}</dd>
+            </dl>
+
+            <div class="ns-actions">
+                <form action="{{ url_for('add_to_cart') }}" method="POST">
+                    <input type="hidden" name="item_id" value="{{ product.Item_ID }}">
+                    <input type="hidden" name="user_id" value="{{ user_id }}">
+                    <button type="submit" class="ns-btn" style="padding: 14px 30px; font-size: 16px;">Add to Cart</button>
+                </form>
+                <form action="{{ url_for('add_to_wishlist') }}" method="POST">
+                    <input type="hidden" name="item_id" value="{{ product.Item_ID }}">
+                    <input type="hidden" name="user_id" value="{{ user_id }}">
+                    <button type="submit" class="ns-btn ns-btn-ghost" style="padding: 12.5px 28px; font-size: 16px;">Add to Wishlist</button>
+                </form>
+            </div>
+            <a href="/product/{{ product.Item_ID }}/rating_review" style="display: inline-block; margin-top: 18px; font-size: 15px; font-weight: 600; color: #474795; text-decoration: underline;">Rate and Review this Product</a>
+
+            {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <ul class="ns-flash">
+                    {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+                </ul>
             {% endif %}
-            {{ product.stock }}
-        </li>
+            {% endwith %}
+        </div>
+    </div>
 
-        <li class="product-item"><strong>Rating:</strong> {{ product.item_star }}</li>
-        <li class="product-item"><strong>Sizes:</strong> {{ product.itme_sizes }}</li>
-        <li class="product-item"><strong>Color:</strong> {{ product.color }}</li>
-        <li class="product-item" style="border-bottom: none;"><a href="/product/{{ product.Item_ID }}/rating_review" class="rating-review-btn">Rate and Review this Product</a></li>
-        <li class="product-item" style="border-bottom: none;">
-            <form action="{{ url_for('add_to_wishlist') }}" method="POST">
-                <input type="hidden" name="item_id" value="{{ product.Item_ID }}">
-                <input type="hidden" name="user_id" value="{{ user_id }}">
-                <button type="submit" class="rating-review-btn">Add to Wishlist</button>
-            </form>
-        </li>
-        <li class="product-item" style="border-bottom: none;">
-            <form action="{{ url_for('add_to_cart') }}" method="POST">
-                <input type="hidden" name="item_id" value="{{ product.Item_ID }}">
-                <input type="hidden" name="user_id" value="{{ user_id }}">
-                <button type="submit" class="rating-review-btn">Add to Cart</button>
-            </form>
-        </li>
-        {% with messages = get_flashed_messages() %}
-        {% if messages %}
-            <ul class="flashes">
-                {% for message in messages %}
-                    <li style="color: red;">{{ message }}</li>
-                {% endfor %}
-            </ul>
-        {% endif %}
-        {% endwith %}
-    
-    </ul>
-    <div class="ratings-reviews">
-        <h2>Ratings and Reviews</h2>
+    <section class="ns-reviews">
+        <h2 class="ns-h2">Ratings and Reviews</h2>
         {% if ratings_reviews %}
             {% for rating_review in ratings_reviews %}
-                <div class="rating-review">
+                <div class="ns-review">
                     <p><strong>Rating:</strong> {{ rating_review.rating }}</p>
                     <p><strong>Review:</strong> {{ rating_review.review }}</p>
                 </div>
             {% endfor %}
         {% else %}
-            <p>No ratings and reviews yet.</p>
+            <div class="ns-panel" style="padding: 28px 32px;">No ratings and reviews yet.</div>
         {% endif %}
-    </div>
-
+    </section>
 </div>
 {% endblock %}

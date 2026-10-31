@@ -1,11 +1,15 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="page" style="text-align: center; padding: 40px;">
-    <h1>Thank You for Your Order!</h1>
-    <p style="text-align: center;">Your order has been confirmed and is being processed. It will be delivered within 3-5 working days.</p>
-    <div style="margin: 20px;">
-        <a href="/dashboard" style="text-decoration: none; color: white; background-color: #6e6ea0; padding: 10px 20px; border-radius: 5px; display: inline-block;">Go to Dashboard</a>
+<style>
+    body { background-color: #fff; }
+</style>
+
+<div class="ns-wrap" style="max-width: 760px; padding-top: 72px; text-align: center;">
+    <div style="background: #dfe3ee; border-radius: 16px; padding: 56px 40px;">
+        <h1 class="ns-title" style="margin-bottom: 0;">Thank You for Your Order!</h1>
+        <p style="margin: 18px auto 0; max-width: 30em; font-size: 18px; line-height: 1.55;">Your order has been confirmed and is being processed. It will be delivered within 3-5 working days.</p>
+        <a href="/dashboard" class="ns-btn" style="margin-top: 30px; padding: 15px 30px; font-size: 16px;">Go to Dashboard</a>
     </div>
 </div>
 {% endblock %}

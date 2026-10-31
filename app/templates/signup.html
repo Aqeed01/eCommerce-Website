@@ -1,29 +1,38 @@
 {% extends 'base.html' %}
 
 {% block content %}
-    <div class="signup-container">
-        <div class="signup-form">
-            <h1>Sign Up Here!</h1>
-            <form action="/signup" method="post">
-                <label for="username">Username:</label><br>
-                <input type="text" id="username" name="username" required><br>
-                <label for="email">Email:</label><br>
-                <input type="email" id="email" name="email" required><br>
-                <label for="password">Password:</label><br>
-                <input type="password" id="password" name="password" required><br><br>
-                <label>What are you looking for?</label><br>
-                <input type="checkbox" id="Kitchen" name="categories[]" value="Kitchen">
-                <label for="kitchen">Kitchen</label><br>
-                <input type="checkbox" id="Apparel" name="categories[]" value="Apparel">
-                <label for="apparel">Apparel</label><br>
-                <input type="checkbox" id="Fitness" name="categories[]" value="Fitness">
-                <label for="fitness">Fitness</label><br>
-                <input type="checkbox" id="Accessories" name="categories[]" value="Accessories">
-                <label for="accessories">Accessories</label><br>
-                <input type="checkbox" id="Books" name="categories[]" value="Books">
-                <label for="books">Books</label><br><br>
-                <input type="submit" value="Sign Up">
-            </form>
-        </div>
+<style>
+    body { background-color: #fff; }
+    .ns-chip input { width: 16px; height: 16px; margin: 0; }
+</style>
+
+<div class="ns-auth">
+    <div class="ns-auth-photo"><img src="/static/tshirt.jpg" alt="T-Shirt" style="min-height: 520px;"></div>
+    <div class="ns-auth-form">
+        <h1>Sign Up Here!</h1>
+        <form action="/signup" method="post">
+            <div class="ns-field">
+                <label class="ns-label" for="username">Username</label>
+                <input class="ns-input" type="text" id="username" name="username" required>
+            </div>
+            <div class="ns-field">
+                <label class="ns-label" for="email">Email</label>
+                <input class="ns-input" type="email" id="email" name="email" required>
+            </div>
+            <div class="ns-field">
+                <label class="ns-label" for="password">Password</label>
+                <input class="ns-input" type="password" id="password" name="password" required>
+            </div>
+            <fieldset style="border: 0; margin: 6px 0 0; padding: 0;">
+                <legend class="ns-label" style="padding: 0;">What are you looking for?</legend>
+                <div class="ns-chips">
+                    {% for category in ['Kitchen', 'Apparel', 'Fitness', 'Accessories', 'Books'] %}
+                    <label class="ns-chip" for="{{ category }}"><input type="checkbox" id="{{ category }}" name="categories[]" value="{{ category }}">{{ category }}</label>
+                    {% endfor %}
+                </div>
+            </fieldset>
+            <button type="submit" class="ns-btn" style="width: 100%; margin-top: 22px; padding: 15px; font-size: 16px; min-height: 48px;">Sign Up</button>
+        </form>
     </div>
+</div>
 {% endblock %}

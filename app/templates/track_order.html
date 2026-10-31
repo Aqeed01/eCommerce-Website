@@ -2,144 +2,65 @@
 
 {% block content %}
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        background-color: #d4e1e7;
-    }
-
-    .container {
-        width: 90%;
-        margin: auto;
-        overflow: hidden;
-        color:#666;
-    }
-
-    h2 {
-        color: #656161;
-        text-align: center;
-    }
-
-    .orders {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-around;
-        margin-top: 20px;
-    }
-
-    .order {
-        width:30%; /* Adjusted width */
-        height:380px;
-        background-color: #f0ebeb;
-        border: 1px solid #ddd;
-        border-radius: 10px;
-        margin: 10px;
-        padding: 15px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        transition: transform 0.3s ease;
-    }
-
-    .order:hover {
-        transform: translateY(-5px);
-    }
-
-    .order h3 {
-        color: #6c6a6a;
-        margin-bottom: 10px;
-    }
-
-    .order p {
-        margin: 5px 0;
-        color: #666;
-    }
-
-    .product-image {
-        width: 100%;
-        height: 200px; /* Fixed height for all images */
-        object-fit: cover; /* Crop images if needed */
-        margin-bottom: 10px;
-        border-radius: 5px;
-    }
-
-    .order-details {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-top: 10px;
-    }
-
-    .refund-button {
-        padding: 6px 12px;
-        background-color: #707ab0;
-        color: #fff;
-        text-decoration: none;
-        border-radius: 50px;
-        transition: background-color 0.3s;
-        margin-top: -40px;
-    }
-
-    .refund-button:hover {
-        background-color: #484879;
-    }
-
-    .refund-button.disabled {
-        background-color: #ccc;
-        pointer-events: none;
-    }
-
-    .refund-not-possible {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-top: -30px; /* Adjust the value as needed */
-    }
-
-    .refund-not-possible p {
-        margin: 0;
-        color: #db7474;
-    }
+    body { background-color: #fff; }
+    .ns-track { border: 1px solid #dfe3ee; border-radius: 12px; padding: 24px 26px; margin-bottom: 20px; }
+    .ns-track-top { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px 24px; }
+    .ns-track-top img { width: 96px; height: 96px; object-fit: cover; border-radius: 8px; background: #dfe3ee; }
+    .ns-track-id { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 30px; color: #25254f; }
+    .ns-steps { list-style: none; margin: 12px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+    .ns-steps li { display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: #6b6874; }
+    .ns-steps li span.bar { display: block; height: 8px; border-radius: 999px; background: #dfe3ee; }
+    .ns-steps li.done { color: #25254f; font-weight: 600; }
+    .ns-steps li.done span.bar { background: #6666ad; }
+    .ns-nofund { display: inline-block; background: #f5e3e0; color: #5a2520; border-radius: 8px; padding: 11px 16px; font-size: 14px; }
 </style>
 
-<div class="container">
-    <br><h2 text-align:centre> Track Your Orders 🚚</h2>
-    <div class="orders">
-        {% if order_history %}
-            {% for order in order_history %}
-                <div class="order">
-                    <!-- Order details -->
-                    <h3>Order ID: {{ order.id }}</h3>
-                    <p>Status: {{ order.tracking_level }}</p>
-                    <p>Total Price: ${{ order.total_price | round(2) }}</p>
-                    {% if order.date_created %}
-                        <p>Order Date: {{ order.date_created.strftime('%Y-%m-%d %H:%M:%S') }}</p>
-                    {% else %}
-                        <!-- Handle case when order.date_created is None -->
-                    {% endif %}
+<div class="ns-wrap ns-narrow">
+    <h1 class="ns-title">Track Your Orders</h1>
 
-                    <!-- Product image -->
-                    {% if order.items %}
-                        <div class="product-image">
-                            <img src="{{ order.items[0].pic }}" alt="Product Image" width="150">
-                        </div>
-                    {% endif %}
-
-                    <!-- Order details and refund button -->
-                    <div class="order-details">
-                        {% if order.tracking_level == 'Processing' %}
-                            <a href="/refund_order/{{ order.id }}" class="refund-button">Get Refund</a>
-                        {% else %}
-                            <div class="refund-not-possible">
-                                <p>Sorry, refund not possible as your product is on its way!</p>
-                            </div>
-                        {% endif %}
-                    </div>
+    {% set steps = ['Processing', 'Ready for Delivery', 'Delivered'] %}
+    {% if order_history %}
+        {% for order in order_history %}
+        {% set at = steps.index(order.tracking_level) + 1 if order.tracking_level in steps else 1 %}
+        <section class="ns-track">
+            <div class="ns-track-top">
+                <div>
+                    <div class="ns-muted">Order ID</div>
+                    <div class="ns-track-id">{{ order.id }}</div>
                 </div>
-            {% endfor %}
-        {% else %}
-            <p>No orders to track.</p>
-        {% endif %}
-    </div>
-</div>
+                <div>
+                    <div class="ns-muted">Total Price</div>
+                    <div class="ns-price" style="font-size: 20px;">${{ order.total_price | round(2) }}</div>
+                </div>
+                {% if order.date_created %}
+                <div>
+                    <div class="ns-muted">Order Date</div>
+                    <div style="font-weight: 600; color: #25254f;">{{ order.date_created.strftime('%Y-%m-%d %H:%M:%S') }}</div>
+                </div>
+                {% endif %}
+                {% if order.items %}
+                <img src="{{ order.items[0].pic }}" alt="{{ order.items[0].name }}">
+                {% endif %}
+            </div>
 
+            <div class="ns-muted" style="margin-top: 22px;">Status: <strong style="color: #25254f;">{{ order.tracking_level }}</strong></div>
+            <ol class="ns-steps" aria-label="Order progress">
+                {% for step in steps %}
+                <li class="{{ 'done' if loop.index <= at else '' }}"><span class="bar"></span>{{ step }}</li>
+                {% endfor %}
+            </ol>
+
+            <div style="margin-top: 22px;">
+                {% if order.tracking_level == 'Processing' %}
+                    <a href="/refund_order/{{ order.id }}" class="ns-btn">Get Refund</a>
+                {% else %}
+                    <span class="ns-nofund">Sorry, refund not possible as your product is on its way!</span>
+                {% endif %}
+            </div>
+        </section>
+        {% endfor %}
+    {% else %}
+        <div class="ns-panel" style="padding: 32px;">No orders to track.</div>
+    {% endif %}
+</div>
 {% endblock %}
