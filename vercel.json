@@ -1,0 +1,4 @@
+{
+  "builds": [{ "src": "index.py", "use": "@vercel/python", "config": { "includeFiles": ["app/**", "instance/**"] } }],
+  "routes": [{ "src": "/(.*)", "dest": "index.py" }]
+}
