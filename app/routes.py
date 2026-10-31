@@ -45,6 +45,10 @@ def product_page(Item_ID):
 def product_rating_review(Item_ID):
     username = session.get('username')
     user = User.query.filter_by(username=username).first()
+    if user is None:
+        flash('Please log in to rate and review products.', 'error')
+        session.pop('username', None)
+        return redirect(url_for('login'))
     if request.method == 'POST':
         rating = request.form.get('rating')
         review = request.form.get('review')
@@ -124,6 +128,13 @@ def signup():
         email = request.form['email']
         password = request.form['password']
         categories = request.form.getlist('categories[]')
+
+        if User.query.filter_by(username=username).first():
+            flash('That username is already taken.', 'error')
+            return render_template('signup.html')
+        if User.query.filter_by(email=email).first():
+            flash('An account with that email already exists.', 'error')
+            return render_template('signup.html')
 
         new_user = User(username=username, email=email, password=hash_secret(password))
         db.session.add(new_user)
@@ -263,7 +274,11 @@ def add_to_wishlist():
     if request.method == 'POST':
         username = session.get('username')
         user = User.query.filter_by(username=username).first()
-        user_id = user.id # Corrected line
+        if user is None:
+            flash('Please log in to add items to your wishlist.', 'error')
+            session.pop('username', None)
+            return redirect(url_for('login'))
+        user_id = user.id
 
         # Check if the user is logged in
         if not user_id:
@@ -329,6 +344,10 @@ def add_to_cart():
     if request.method == 'POST':
         username = session.get('username')
         user = User.query.filter_by(username=username).first()
+        if user is None:
+            flash('Please log in to add items to your cart.', 'error')
+            session.pop('username', None)
+            return redirect(url_for('login'))
         user_id = user.id
         
         # Check if the user is logged in
@@ -461,7 +480,11 @@ def place_order():
     # Retrieve user_id from session
     username = session.get('username')
     user = User.query.filter_by(username=username).first()
-    user_id=user.id
+    if user is None:
+        flash('Please log in to place an order.', 'error')
+        session.pop('username', None)
+        return redirect(url_for('login'))
+    user_id = user.id
     if user_id is None:
         # Redirect to login if user_id not found in session
         return redirect(url_for('login'))
@@ -724,12 +747,12 @@ def chat():
 @app.route('/chat/send_message', methods=['POST'])
 def send_message():
     # Extract the message from the request
-    message = request.form.get('message')
+    message = request.form.get('message', '')
 
     # Check if the message contains "what is the price of" followed by an SKU number
-    if "sku" in message.lower():
+    if "sku " in message.lower():
         # Extract the SKU number from the message
-        sku = message.split("sku ")[1].strip().upper()  # Convert SKU to uppercase for case-insensitive search
+        sku = message.lower().split("sku ", 1)[1].strip().upper()  # Convert SKU to uppercase for case-insensitive search
 
         # Query the database to retrieve the item with the specified SKU number
         item = Items.query.filter_by(sku=sku).first()

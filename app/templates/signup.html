@@ -10,6 +10,13 @@
     <div class="ns-auth-photo"><img src="/static/tshirt.jpg" alt="T-Shirt" style="min-height: 520px;"></div>
     <div class="ns-auth-form">
         <h1>Sign Up Here!</h1>
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class="ns-flash" style="margin: -8px 0 16px;">
+            {% for message in messages %}<li>{{ message }}</li>{% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
         <form action="/signup" method="post">
             <div class="ns-field">
                 <label class="ns-label" for="username">Username</label>
