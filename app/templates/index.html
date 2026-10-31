@@ -1,168 +1,109 @@
-<!-- index.html -->
-
 {% extends "base.html" %}
 
 {% block content %}
-
 <style>
-    /* style.css */
+    body { background-color: #fff; }
+    .home { max-width: 1320px; margin: 0 auto; padding: 32px 32px 0; }
 
-    /* Slideshow container */
-    body {
-            margin: 0;
-            font-family: Font1,Arial, sans-serif;
-            /*background-color: #dfe3ee; Light pastel color */
-            background-color: #fff;
-            color: #615f5f;
-        }
+    /* Deals slideshow: photo on the left, the deal on the right */
     .slideshow-container {
-        max-width: 1500px;
-        margin: auto;
-        overflow: hidden; /* Ensure slides stay within container */
-        border: 1px solid #ccc; /* Add border for visual separation */
-        background-color: #bdb8c1; 
-        border-radius: 5px; /* Add border radius for rounded corners */
-        position: relative; /* Relative positioning for absolute positioning of product details */
+        background-color: #bdb8c1;
+        border-radius: 12px;
+        overflow: hidden;
     }
-
-    /* Hide the images by default */
-    .slide {
-        display: none;
-    }
-
-    /* Set fixed width and height for images */
-    .slide img {
-        width: 60%; /* Adjust the width as needed */
-        height: 300px; /* Adjust the height as needed */
-        object-fit: cover; /* Maintain aspect ratio */
-        float: left; /* Float left for image */
-    }
-
-    /* Position the deal information on the right of each product */
+    .slide { display: none; flex-wrap: wrap; min-height: 360px; }
+    .slide img { flex: 1 1 480px; min-width: 0; height: 360px; object-fit: cover; }
     .product-details {
-        position: absolute;
-        top: 50%;
-        right: 0;
-        transform: translateY(-50%);
-        width: 30%; /* Take 50% width of the container */
-        height: auto; /* Auto height */
-        padding: 20px;
-        box-sizing: border-box; /* Include padding and border in the element's total width and height */
+        flex: 1 1 320px;
+        min-width: 0;
+        padding: 40px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 10px;
+        color: #25254f;
     }
-    /* Fade animation for the slides */
-    .fade {
-        animation: fade 5s infinite;
-    }
+    .deal-cat { font-size: 14px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; }
+    .deal-star { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 60px; line-height: 1; color: #6b2f29; }
+    .deal-name { font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 34px; line-height: 1.1; }
+    .deal-price { font-size: 20px; font-weight: 600; }
+    .fade { animation: fade 5s infinite; }
+    @keyframes fade { 0% { opacity: 0.4; } 20% { opacity: 1; } 80% { opacity: 1; } 100% { opacity: 0.4; } }
+    .dots { text-align: center; margin: 16px 0 0; }
+    .dot { height: 15px; width: 15px; background-color: #bdb8c1; border-radius: 50%; display: inline-block; margin: 0 4px; transition: background-color 0.6s ease; }
+    .active { background-color: #6f6380; }
 
-    /* Define the dots to indicate the slide position */
-    .dot {
-        height: 15px;
-        width: 15px;
-        background-color: #bbb;
-        border-radius: 50%;
-        display: inline-block;
-        margin: 0 2px;
-        transition: background-color 0.6s ease;
-    }
-
-    /* Active dot */
-    .active {
-        background-color: #717171;
-    }
-    .custom-footer {
-            background-color: #c6c6d4; /* Light grey nearly purple color */
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height:10%;
-            padding: 5px 0; /* Adjust padding as needed */
-            text-align: center;
-        }
-    .content {
-            padding-bottom: 60px; /* Adjust the value based on the height of your footer */
-        }
-
-    /* Keyframe animation for fading slides */
-    @keyframes fade {
-        0% {
-            opacity: 0.4;
-        }
-        20% {
-            opacity: 1;
-        }
-        80% {
-            opacity: 1;
-        }
-        100% {
-            opacity: 0.4;
-        }
-    }
-
-    /* Button style */
     .view-button {
-        padding: 10px 20px;
-        background-color: #90839c;
-        color: white;
+        display: inline-block;
+        padding: 14px 26px;
+        background-color: #6f6380;
+        color: #fff;
         border: none;
-        border-radius: 5px;
+        border-radius: 6px;
+        font-weight: 600;
+        font-size: 16px;
+        text-decoration: none;
         cursor: pointer;
     }
+    .view-button:hover { background-color: #5f5468; color: #fff; }
 
-    .view-button:hover {
-        background-color: #5f5468;
+    .tagline {
+        margin-top: 32px;
+        background-color: #dfe3ee;
+        border-radius: 12px;
+        padding: 48px 40px;
     }
-    .deal-star {
-        font-size: 50px; /* Increase font size */
-        color: #964a42; /* Change font color */
+    .tagline h1 { margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 56px; line-height: 1.02; color: #25254f; max-width: 14em; }
+    .tagline p { margin: 18px 0 0; max-width: 32em; font-size: 17px; line-height: 1.55; color: #4a4850; }
+
+    .custom-footer {
+        margin-top: 72px;
+        background-color: #c6c6d4;
+        color: #25254f;
     }
-    .gif-section {
-        margin-top: 20px;
+    .footer-inner {
+        max-width: 1320px;
+        margin: 0 auto;
+        padding: 20px 32px;
         display: flex;
-        justify-content: center;
-        align-items: center;
         flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
     }
-
-    .gif {
-        height:400px;
-        width:200; /* Adjust the width as needed for smaller size */
-        margin: 30px; /* Adjust the margin as needed */
-    }
-
-    .gif-text-container {
-    text-align: center;
-    margin-right: 30px; /* Adjust as needed for spacing */
-    }
-
-    .enjoy-shopping-text {
-        font-size: 25px;
-        margin-bottom: 10px;
-        color: #964a42;
-    }
-
+    .footer-name { font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 22px; margin-left: 20px; }
 </style>
 
-<div class="slideshow-container">
-    {% for product in deals_products %}
-        <div class="slide fade">
-            <img src="{{ product.item.pic }}" alt="Product Image">
-            <div class="product-details">
-                <div class="deal-star">{{ product.deal }}</div>
-                <a href="{{ url_for('product_page', Item_ID=product.item_id) }}"><button class="view-button">View Product</button></a>
+<div class="home">
+    <div class="slideshow-container">
+        {% for product in deals_products %}
+            <div class="slide fade">
+                <img src="{{ product.item.pic }}" alt="{{ product.item.name }}">
+                <div class="product-details">
+                    <div class="deal-cat">{{ product.item.category }}</div>
+                    <div class="deal-star">{{ product.deal }}</div>
+                    <div class="deal-name">{{ product.item.name }}</div>
+                    <div class="deal-price">${{ product.item.price }}</div>
+                    <div><a class="view-button" href="{{ url_for('product_page', Item_ID=product.item_id) }}">View Product</a></div>
+                </div>
             </div>
-        </div>
-    {% endfor %}
-</div>
-<br>
-<div style="text-align:center">
-    {% for _ in deals_products %}
-        <span class="dot"></span>
-    {% endfor %}
+        {% endfor %}
+    </div>
+    <div class="dots" aria-hidden="true">
+        {% for _ in deals_products %}
+            <span class="dot"></span>
+        {% endfor %}
+    </div>
+
+    <section class="tagline">
+        <h1>Affordable Style for Every Smile!</h1>
+        <p>Set a budget and every item you add is checked against what you have left, so you never spend more than you planned.</p>
+    </section>
 </div>
 
 <script>
-    // JavaScript for slideshow functionality
+    // Deals slideshow: change slide every 5 seconds
     var slideIndex = 0;
     showSlides();
 
@@ -170,48 +111,30 @@
         var i;
         var slides = document.getElementsByClassName("slide");
         var dots = document.getElementsByClassName("dot");
+        if (!slides.length) { return; }
         for (i = 0; i < slides.length; i++) {
             slides[i].style.display = "none";
         }
         slideIndex++;
-        if (slideIndex > slides.length) {slideIndex = 1}
+        if (slideIndex > slides.length) { slideIndex = 1; }
         for (i = 0; i < dots.length; i++) {
             dots[i].className = dots[i].className.replace(" active", "");
         }
-        slides[slideIndex-1].style.display = "block";
-        dots[slideIndex-1].className += " active";
-        setTimeout(showSlides, 5000); // Change image every 5 seconds
+        slides[slideIndex - 1].style.display = "flex";
+        dots[slideIndex - 1].className += " active";
+        setTimeout(showSlides, 5000);
     }
 </script>
 
-<!-- GIFs section -->
-<div class="gif-section">
-    <img src="/static/Layout_GIF.gif" alt="GIF 1" class="gif">
-    <img src="/static/bag_GIF.gif" alt="GIF 2" class="gif">
-    <div class="gif-text-container">
-        <div class="enjoy-shopping-text">Affordable Style for Every Smile!</div>
-        <div class="tenor-gif-embed" data-postid="15958416" data-share-method="host" data-aspect-ratio="1.23552" data-width="120%"><a href="https://tenor.com/view/shopping-buy-spend-gif-15958416">Shopping Buy Sticker</a>from <a href="https://tenor.com/search/shopping-stickers">Shopping Stickers</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>
+<footer class="custom-footer">
+    <div class="footer-inner">
+        <div>
+            <a class="view-button" href="https://forms.gle/wGrvQbqYa5UigwAT7">Complaint Box</a>
+            <span class="footer-name">SHOP-NONSTOP!</span>
+        </div>
+        <a href="/chat" id="chat-icon" aria-label="Open chat">
+            <img src="/static/chat-icon.png" alt="Chat" width="50" height="50">
+        </a>
     </div>
-
-    <!--<div class="tenor-gif-embed" data-postid="15958416" data-share-method="host" data-aspect-ratio="1.23552" data-width="25%"><a href="https://tenor.com/view/shopping-buy-spend-gif-15958416">Shopping Buy Sticker</a>from <a href="https://tenor.com/search/shopping-stickers">Shopping Stickers</a></div> <script type="text/javascript" async src="https://tenor.com/embed.js"></script>-->
-    <!-- Add more <img> tags for additional GIFs -->
-</div>
-
-
-<!-- Footer section -->
-<footer class="text-center py-4 custom-footer">
-    <a class="view-button" onclick="redirectToGoogleForm()">Complaint Box</a>
-    <a href="/chat" id="chat-icon">
-        <img src="/static/chat-icon.png" alt="Chat" width="50" height="50">
-    </a>
-    
 </footer>
-
-<script>
-function redirectToGoogleForm() {
-    // Redirect to the Google Form URL
-    window.location.href = "https://forms.gle/wGrvQbqYa5UigwAT7"; // Replace with your Google Form URL
-}
-</script>
-
 {% endblock %}
