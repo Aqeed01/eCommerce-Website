@@ -1,4 +1,5 @@
 from app import app, db
+from app.auth import hash_secret, verify_secret
 from flask import render_template, request, redirect, url_for,flash,session,send_from_directory,abort,jsonify
 from app.models import Items, Order,User, user_vouchers, UserPreference, RatingReview, Voucher,Wishlist,Cart, Deals,Admin,Friendship, Notification
 from sqlalchemy.sql import text,or_
@@ -124,7 +125,7 @@ def signup():
         password = request.form['password']
         categories = request.form.getlist('categories[]')
 
-        new_user = User(username=username, email=email, password=password)
+        new_user = User(username=username, email=email, password=hash_secret(password))
         db.session.add(new_user)
         db.session.commit()
 
@@ -143,7 +144,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
-        if user and user.password == password:
+        if user and verify_secret(user, 'password', password):
             # Authentication successful, store user id in session
             #session['user_id'] = user.id
             session['username'] = user.username
@@ -610,8 +611,8 @@ def admin_login():
         username = request.form['username']
         password = request.form['password']
         # Check if the credentials match an admin record in the database
-        admin = Admin.query.filter_by(username=username, password=password).first()
-        if admin:
+        admin = Admin.query.filter_by(username=username).first()
+        if admin and verify_secret(admin, 'password', password):
             # Store admin ID in session
             session['admin_id'] = admin.id
             return redirect(url_for('admin_dashboard'))
