@@ -8,9 +8,20 @@ from flask_sqlalchemy import SQLAlchemy
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 
+def database_url():
+    """A shared TiDB/MySQL database when DATABASE_URL is set (the live sites); otherwise the SQLite demo file."""
+    url = os.environ.get("DATABASE_URL")
+    if url and url.startswith("mysql://"):
+        url = "mysql+pymysql://" + url[len("mysql://"):]
+    return url
+
+
 def database_uri():
     """SQLite file next to the app. On Vercel the code is read-only, so the bundled demo
     database is copied to /tmp on first use; changes there reset when the instance restarts."""
+    shared = database_url()
+    if shared:
+        return shared
     if os.environ.get("VERCEL"):
         target = os.path.join("/tmp", "ecommerce.db")
         if not os.path.exists(target):
@@ -23,6 +34,16 @@ app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = database_uri()
 # Set SECRET_KEY in the environment. Without it a random key is used, so sessions reset on every restart.
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY') or secrets.token_hex(32)
+if (database_url() or '').startswith('mysql'):
+    # Small pools: every serverless instance opens its own, and the database has a connection limit.
+    import certifi
+    app.config['SQLALCHEMY_ENGINE_OPTIONS'] = {
+        'pool_pre_ping': True,
+        'pool_recycle': 280,
+        'pool_size': 2,
+        'max_overflow': 2,
+        'connect_args': {'ssl': {'ca': certifi.where()}},
+    }
 app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'
 app.config['SESSION_COOKIE_SECURE'] = bool(os.environ.get('VERCEL'))
 db = SQLAlchemy(app)
