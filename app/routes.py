@@ -1,12 +1,22 @@
 from app import app, db
 from app.auth import hash_secret, verify_secret
 from flask import render_template, request, redirect, url_for,flash,session,send_from_directory,abort,jsonify
+from urllib.parse import urlparse
 from app.models import Items, Order,User, user_vouchers, UserPreference, RatingReview, Voucher,Wishlist,Cart, Deals,Admin,Friendship, Notification
 from sqlalchemy.sql import text,or_
 from math import ceil
 from datetime import datetime
 from itertools import groupby
 from datetime import datetime, timedelta
+
+@app.before_request
+def refuse_cross_site_posts():
+    """A form post that names another website as its origin is a forged request."""
+    if request.method in ('POST', 'PUT', 'PATCH', 'DELETE'):
+        origin = request.headers.get('Origin') or request.headers.get('Referer')
+        if origin and urlparse(origin).netloc != request.host:
+            abort(403)
+
 
 @app.route('/')
 def index():
@@ -560,6 +570,9 @@ def place_order():
 @app.route('/order_confirmation/<int:order_id>')
 def order_confirmation(order_id):
     order = Order.query.get_or_404(order_id)
+    user = User.query.filter_by(username=session.get('username')).first()
+    if user is None or order.user_id != user.id:
+        abort(403)
     return render_template('order_confirmation.html', order=order)
 
 
@@ -582,7 +595,14 @@ def track_order():
 
 @app.route('/refund_order/<int:order_id>')
 def refund_order(order_id):
+    user = User.query.filter_by(username=session.get('username')).first()
+    if user is None:
+        flash('Please log in to continue.', 'error')
+        session.pop('username', None)
+        return redirect(url_for('login'))
     order = Order.query.get(order_id)
+    if order is not None and order.user_id != user.id:
+        abort(403)
     if order and order.tracking_level == 'Processing':
         return render_template('refund_order.html', order=order)
     else:
@@ -590,7 +610,16 @@ def refund_order(order_id):
 
 @app.route('/submit_refund/<int:order_id>', methods=['POST'])
 def submit_refund(order_id):
+    user = User.query.filter_by(username=session.get('username')).first()
+    if user is None:
+        flash('Please log in to continue.', 'error')
+        session.pop('username', None)
+        return redirect(url_for('login'))
     order = Order.query.get(order_id)
+    if order is not None and order.user_id != user.id:
+        abort(403)
+    if order is not None and order.tracking_level != 'Processing':
+        return "Sorry, refund is not possible as your product is on its way!"
     if order:
         reason = request.form.get('reason')
         points1 = int(order.total_price) * 100  
