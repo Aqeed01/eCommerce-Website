@@ -36,7 +36,8 @@ def show_products():
     # Calculate total number of pages
     total_pages = ceil(products.total / per_page)
 
-    return render_template('show_products.html', products=products, page=page, total_pages=total_pages)
+    categories = [c[0] for c in Items.query.with_entities(Items.category).distinct().all()]
+    return render_template('show_products.html', products=products, page=page, total_pages=total_pages, categories=categories)
 
 
 @app.route('/product/<string:Item_ID>')
