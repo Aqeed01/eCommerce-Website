@@ -62,6 +62,13 @@ def product_rating_review(Item_ID):
     if request.method == 'POST':
         rating = request.form.get('rating')
         review = request.form.get('review')
+        try:
+            rating = int(rating)
+        except (TypeError, ValueError):
+            rating = 0
+        if not 1 <= rating <= 5 or not Items.query.filter_by(Item_ID=Item_ID).first():
+            flash('Please choose a rating from 1 to 5.', 'error')
+            return redirect(url_for('product_page', Item_ID=Item_ID))
 
         # Create a new entry for rating and review in the database
         rating_review = RatingReview(item_id=Item_ID, rating=rating, review=review)
@@ -94,11 +101,11 @@ def search_products():
     query_base = Items.query
 
     # Apply filters if provided
-    if price:
+    if price and price.lstrip('-').isdigit():
         query_base = query_base.filter(Items.price <= int(price))
     if category:
         query_base = query_base.filter(Items.category.ilike(f'%{category}%'))
-    if item_star:
+    if item_star and item_star.lstrip('-').isdigit():
         query_base = query_base.filter(Items.item_star >= int(item_star))
 
     # Filter products based on search query
@@ -138,11 +145,18 @@ def signup():
         email = request.form['email']
         password = request.form['password']
         categories = request.form.getlist('categories[]')
+        username, email = username.strip(), email.strip()
 
-        if User.query.filter_by(username=username).first():
+        if not username or not email or not password:
+            flash('Username, email and password are all required.', 'error')
+            return render_template('signup.html')
+        if len(username) > 80 or len(email) > 120 or len(password) > 200:
+            flash('Username, email or password is too long.', 'error')
+            return render_template('signup.html')
+        if User.query.filter(db.func.lower(User.username) == username.lower()).first():
             flash('That username is already taken.', 'error')
             return render_template('signup.html')
-        if User.query.filter_by(email=email).first():
+        if User.query.filter(db.func.lower(User.email) == email.lower()).first():
             flash('An account with that email already exists.', 'error')
             return render_template('signup.html')
 
@@ -177,7 +191,13 @@ def login():
 @app.route('/set_budget', methods=['GET', 'POST'])
 def set_budget():
     if request.method == 'POST':
-        budget = round(float(request.form['budget']), 2)
+        try:
+            budget = round(float(request.form.get('budget', '')), 2)
+        except (TypeError, ValueError):
+            budget = None
+        if budget is None or not 0 <= budget <= 1000000:
+            flash('Please enter a budget between 0 and 1,000,000.', 'error')
+            return render_template('set_budget.html')
         session['budget'] = budget
         flash('Budget set successfully', 'success')
         return redirect(url_for('index'))  # Redirect to the homepage or any other page after setting the budget
@@ -297,6 +317,9 @@ def add_to_wishlist():
 
         # Get item ID from the form
         item_id = request.form.get('item_id')
+        if not Items.query.filter_by(Item_ID=item_id).first():
+            flash('That item does not exist.', 'error')
+            return redirect(url_for('dashboard'))
 
         # Check if the item is already in the user's wishlist
         existing_wishlist_item = Wishlist.query.filter_by(user_id=user_id, item_id=item_id).first()
@@ -368,6 +391,9 @@ def add_to_cart():
         # Get item ID and price from the form
         item_id = request.form.get('item_id')
         item = Items.query.filter_by(Item_ID=item_id).first()
+        if item is None:
+            flash('That item does not exist.', 'error')
+            return redirect(url_for('index'))
         price = item.price
         # Retrieve budget from session
         budget = session.get('budget', 0.0)
@@ -435,7 +461,7 @@ def remove_from_cart(item_id):
                     price = item.price
 
                     # Add the price of the item back to the budget
-                    session['budget'] += price
+                    session['budget'] = session.get('budget', 0.0) + price
 
                     # Remove the item from the cart
                     db.session.delete(cart_item)
@@ -464,7 +490,7 @@ def checkout():
         phone = request.form['phone']
         address = request.form['address']
         cart_items = Cart.query.filter_by(user_id=user.id).all()
-        total_price = round(sum(item.price for item in cart_items), 2)  # Adjust based on actual model
+        total_price = round(sum(item.item.price for item in cart_items), 2)  # Adjust based on actual model
 
         # Create and save the order
         order = Order(user_id=user.id, phone=phone, address=address, total_price=total_price)
@@ -499,8 +525,14 @@ def place_order():
         # Redirect to login if user_id not found in session
         return redirect(url_for('login'))
 
-    phone = request.form['phone']
-    address = request.form['address']
+    phone = request.form.get('phone', '').strip()
+    address = request.form.get('address', '').strip()
+    if not phone or not address or len(phone) > 20 or len(address) > 100:
+        flash('Please give a phone number (up to 20 characters) and an address (up to 100).', 'error')
+        return redirect(url_for('cart'))
+    if not Cart.query.filter_by(user_id=user_id).first():
+        flash('Your cart is empty.', 'error')
+        return redirect(url_for('cart'))
 
     # Calculate total_price from cart items
     cart_items = Cart.query.filter_by(user_id=user_id).all()
@@ -745,8 +777,10 @@ def view_expenses():
         return redirect(url_for('login'))
 
     year = request.args.get('year', default=datetime.now().year, type=int)
+    if not 2000 <= year <= 2100:
+        year = datetime.now().year
     # Changed to get list of months to allow multiple months selection or no selection
-    month = request.args.getlist('month', type=int)  
+    month = [m for m in request.args.getlist('month', type=int) if 1 <= m <= 12]  
 
     user = User.query.filter_by(username=username).first()
     if not user:
@@ -757,7 +791,7 @@ def view_expenses():
 
     if month:
         orders = [Order.query.filter(Order.user_id == user.id, Order.date_created >= datetime(year, m, 1),
-                                     Order.date_created < datetime(year, m + 1, 1) if m < 12 else datetime(year + 1, 1, 1)).all() for m in month]
+                                     Order.date_created < (datetime(year, m + 1, 1) if m < 12 else datetime(year + 1, 1, 1))).all() for m in month]
         orders = [item for sublist in orders for item in sublist]  # Flatten the list
     else:
         orders = Order.query.filter(Order.user_id == user.id, Order.date_created >= start_date, Order.date_created < end_date).all()
@@ -831,9 +865,13 @@ def non_stop_points():
 
     if request.method == 'POST':
         voucher_id = request.form.get('voucher_id')
-        selected_voucher = Voucher.query.get(voucher_id)
+        selected_voucher = Voucher.query.get(voucher_id) if voucher_id else None
 
-        if user.points >= selected_voucher.points_cost:
+        if selected_voucher is None:
+            flash('That voucher does not exist.', 'error')
+        elif selected_voucher in user.vouchers:
+            flash('You already hold this voucher.', 'error')
+        elif user.points >= selected_voucher.points_cost:
             user.points -= selected_voucher.points_cost
             # Assuming a relationship between User and Voucher exists
             user.vouchers.append(selected_voucher)
@@ -877,6 +915,9 @@ def add_friend_to_db(friend_id):
         if friend:
             # Add the friend to the current user's friend list
             current_user = User.query.filter_by(username=current_username).first()
+            if friend.id == current_user.id or friend in current_user.friends:
+                flash('You are already friends, or that is you.', 'error')
+                return redirect(url_for('view_friends'))
             current_user.friends.append(friend)
             db.session.commit()
             flash('Friend added successfully!', 'success')
@@ -923,7 +964,7 @@ def remove_friend(friend_id):
         if current_user:
             # Retrieve the friend to be removed
             friend_to_remove = User.query.get(friend_id)
-            if friend_to_remove:
+            if friend_to_remove and friend_to_remove in current_user.friends:
                 # Remove the friend from the user's friend list
                 current_user.friends.remove(friend_to_remove)
                 db.session.commit()
@@ -951,7 +992,13 @@ def gift_points_to_friend(friend_id):
         return redirect(url_for('login'))  
 
     # Retrieve the selected points to gift from the form data
-    points_to_gift = int(request.form['points'])
+    try:
+        points_to_gift = int(request.form.get('points', ''))
+    except ValueError:
+        points_to_gift = 0
+    if points_to_gift <= 0:
+        flash('Enter a positive number of points.', 'error')
+        return redirect(url_for('view_friends'))
 
     # Retrieve the friend from the database
     friend = User.query.get(friend_id)
